@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getUsers, createUser } from '@/actions/users';
+import { getUsers, createUser, deleteUser } from '@/actions/users';
 
 export function SimpleDbTest() {
   const [users, setUsers] = useState<any[]>([]);
@@ -10,6 +10,8 @@ export function SimpleDbTest() {
   const [publicKey, setPublicKey] = useState('');
   const [adding, setAdding] = useState(false);
   const [addMessage, setAddMessage] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState<string | null>(null);
+  const [deleteMessage, setDeleteMessage] = useState<string | null>(null);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -54,6 +56,23 @@ export function SimpleDbTest() {
     setAdding(false);
   };
 
+  const handleDeleteUser = async (userId: string) => {
+    setDeleting(userId);
+    setDeleteMessage(null);
+    
+    const result = await deleteUser(userId);
+    
+    if (result.success) {
+      setDeleteMessage('✅ User deleted successfully!');
+      // Refresh the users list
+      fetchUsers();
+    } else {
+      setDeleteMessage(`❌ Error: ${result.error}`);
+    }
+    
+    setDeleting(null);
+  };
+
   return (
     <div className="bg-[#1a1a1a] border border-[#333] rounded-lg p-4 font-mono text-sm">
       <h3 className="text-lg font-bold mb-3 text-foreground">Users</h3>
@@ -81,6 +100,9 @@ export function SimpleDbTest() {
         {addMessage && (
           <div className="mt-2 text-sm">{addMessage}</div>
         )}
+        {deleteMessage && (
+          <div className="mt-2 text-sm">{deleteMessage}</div>
+        )}
       </div>
 
       {/* Users List */}
@@ -96,9 +118,20 @@ export function SimpleDbTest() {
           <div className="space-y-2">
             {users.map((user) => (
               <div key={user.id} className="p-2 bg-background border border-[#333] rounded">
-                <div className="text-foreground">{user.public_key}</div>
-                <div className="text-xs text-muted-foreground">
-                  ID: {user.id} | Created: {new Date(user.created_at).toLocaleString()}
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <div className="text-foreground">{user.public_key}</div>
+                    <div className="text-xs text-muted-foreground">
+                      ID: {user.id} | Created: {new Date(user.created_at).toLocaleString()}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleDeleteUser(user.id)}
+                    disabled={deleting === user.id}
+                    className="ml-2 px-2 py-1 bg-red-600 text-white text-xs rounded hover:opacity-90 disabled:opacity-50"
+                  >
+                    {deleting === user.id ? 'Deleting...' : 'Delete'}
+                  </button>
                 </div>
               </div>
             ))}
