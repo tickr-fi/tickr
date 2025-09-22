@@ -1,4 +1,19 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Tickr
+
+A **prediction markets discovery platform** built on **Solana**, helping users quickly find and analyze the **hottest markets** to invest in.
+
+Built with **Next.js** (SSR), **Supabase** (Postgres + Realtime), and **TailwindCSS** for a modern, responsive experience.
+
+## Environment Setup
+
+Create a `.env.local` file in the root directory with the following environment variables:
+
+```bash
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_supabase_anon_key
+SUPABASE_SECRET_KEY=your_supabase_service_role_key
+```
 
 ## Getting Started
 

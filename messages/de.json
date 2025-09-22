@@ -1,0 +1,13 @@
+{
+  "welcome": {
+    "title": "Entdecke Heiße Vorhersagemärkte",
+    "subtitle": "Finde und analysiere die heißesten Vorhersagemärkte auf Solana. Echtzeitdaten, sofortiger Handel und intelligente Einblicke."
+  },
+  "navigation": {
+    "markets": "MÄRKTE",
+    "preMarkets": "VORMÄRKTE",
+    "gridView": "RASTER_ANSICHT",
+    "portfolio": "PORTFOLIO",
+    "activity": "AKTIVITÄT"
+  }
+}

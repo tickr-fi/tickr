@@ -1,0 +1,143 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+
+# Product Requirements Document (PRD)
+
+## Project Name  
+**Tickr**
+
+---
+
+## Overview  
+Tickr is a **prediction markets discovery platform** built on **Solana**, helping users quickly find and analyze the **hottest markets** to invest in.  
+
+The platform provides **real-time market data**, wallet connection for transactions, and an optimized interface that works seamlessly across web and mobile.  
+
+The system will be built using **Next.js** (with **SSR** for performance, SEO, and scalability) and **Supabase** for **Postgres storage** and **real-time updates**.  
+
+---
+
+## Goals  
+- Allow users to **discover hot markets** with live Solana data.  
+- Provide a **smooth wallet connection** and transaction flow.  
+- Ensure **fast, responsive, and mobile-friendly** experience.  
+- Support **multiple languages** and **themes**.  
+- Build with **clean, reusable code** following best practices.  
+- Use **Server-Side Rendering (SSR)** for speed, SEO, and scalability.
+
+---
+
+## Key Features  
+1. **Market Discovery**
+   - Display hot and trending prediction markets.  
+   - Sort/filter by price, liquidity, status, and end date.  
+   - Real-time updates via Supabase subscriptions.  
+
+2. **Wallet Integration**
+   - Connect Solana wallets (Phantom, Solflare, etc.).  
+   - Trade and invest directly from the app.  
+
+3. **Internationalization & Themes**
+   - Multi-language support (JSON-based translations).  
+   - Light/Dark themes toggle.  
+
+4. **Mobile Optimization**
+   - Fully responsive design.  
+   - Collapse large tables into card view for small screens.  
+
+5. **Server-Side Rendering (SSR)**
+   - Improved SEO for discoverability.  
+   - Faster load times for initial page rendering.  
+
+6. **User Experience**
+   - Grid and list views.  
+   - Clear status indicators (Active, Resolved, All).  
+   - Portfolio tracking & activity history.  
+
+---
+
+## Design Style  
+
+The UI follows a **dark-mode, terminal-inspired dashboard** aesthetic.  
+
+- **Theme:** Dark background with high-contrast neon accents (orange/red for alerts & actions, green for live data).  
+- **Typography:** Monospaced font, evoking a **command-line/terminal feel**.  
+- **Layout:** Grid and table-based structure for scanning data quickly.  
+- **Mood:** Inspired by **cyberpunk / trading terminal** interfaces, giving a technical and professional trading vibe.  
+- **Interaction:** Clear status indicators, strong highlights for buttons (e.g., "Connect Wallet"), and minimal clutter.  
+
+This style supports **clarity, speed, and confidence**, while appealing to crypto-native users familiar with trading dashboards.  
+
+---
+
+## UI Guidelines  
+
+- **Color Palette**
+  - Primary background: Deep dark gray/black (`#0d0d0d` – `#1a1a1a`).  
+  - Accents: Bright orange/red for CTAs (`#ff4500`), green for live/positive states (`#00ff66`).  
+  - Neutral text: Light gray (`#cccccc`) with white for emphasis.  
+
+- **Typography**
+  - Use **monospaced fonts** (e.g., JetBrains Mono, Fira Code).  
+  - Keep text sizes consistent across tables and buttons.  
+
+- **Components**
+  - Small, reusable components (e.g., `MarketRow`, `WalletButton`, `StatusTag`).  
+  - Buttons: Rectangular, flat, with **hover states** (slight glow/brightness increase).  
+  - Cards/Tables: Rounded corners, light shadow for separation.  
+
+- **Spacing**
+  - Maintain consistent grid spacing (8px or 12px scale).  
+  - Use whitespace to separate key sections.  
+
+- **Feedback & States**
+  - Error states in **red with icon** (e.g., “No market data available”).  
+  - Loading states with spinners or pulsing placeholders.  
+  - Success/active states highlighted in **green or bright accents**.  
+
+- **Responsiveness**
+  - Fully responsive across devices.  
+  - Collapse tables into **card view** on mobile.  
+
+---
+
+## Technical Requirements  
+
+- **Framework:** Next.js with TypeScript  
+- **Database:** Supabase (Postgres)  
+- **Realtime:** Supabase Realtime for updates  
+- **Styling:** TailwindCSS with theme support  
+- **State Management:** React Query / Zustand  
+- **Wallets:** Solana Wallet Adapter (Phantom, Solflare, etc.)  
+
+---
+
+## Development Guidelines (for AI Agent & Devs)  
+
+1. **Clean Code**  
+   - Use TypeScript with strict mode.  
+   - Keep files small and focused.  
+
+2. **Reusable Components**  
+   - Create small, composable UI blocks (`MarketCard`, `WalletButton`, `LanguageSwitcher`).  
+   - Avoid large “god components.”  
+
+3. **Clear Structure**  
+   - Organize code in feature-based folders (`/markets`, `/wallet`, `/portfolio`).  
+   - Maintain consistent naming conventions.  
+
+4. **Best Practices**  
+   - Use SSR for main pages.  
+   - Optimize queries with indexes in Postgres.  
+   - Test API endpoints & realtime streams.  
+
+5. **Multi-language Support**  
+   - Use `next-i18next` or `react-intl`.  
+   - Store translations in JSON.  
+
+6. **Continuous Learning & Consistency**  
+   - Always **analyze the current codebase structure, patterns, and practices** before starting any new task.  
+   - Follow existing conventions to keep the project **consistent and maintainable**. 

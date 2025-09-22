@@ -1,0 +1,13 @@
+{
+  "welcome": {
+    "title": "Discover Hot Prediction Markets",
+    "subtitle": "Find and analyze the hottest prediction markets on Solana. Real-time data, instant trading, and smart insights."
+  },
+  "navigation": {
+    "markets": "MARKETS",
+    "preMarkets": "PRE_MARKETS",
+    "gridView": "GRID_VIEW",
+    "portfolio": "PORTFOLIO",
+    "activity": "ACTIVITY"
+  }
+}
