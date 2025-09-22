@@ -8,6 +8,8 @@ import { Providers } from '@/app/providers';
 import { Header, SmallHeader } from '@/components/layout';
 import '@/app/globals.css';
 import { JetBrains_Mono } from 'next/font/google';
+import { SpeedInsights } from '@vercel/speed-insights/next';
+import { Analytics } from '@vercel/analytics/next';
 
 const jetbrainsMono = JetBrains_Mono({
     variable: '--font-jetbrains-mono',
@@ -40,6 +42,8 @@ export default async function LocaleLayout({ children, params }: Props) {
                         </div>
                     </Providers>
                 </NextIntlClientProvider>
+                <SpeedInsights />
+                <Analytics />
             </body>
         </html>
     );
