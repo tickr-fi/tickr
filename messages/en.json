@@ -8,6 +8,41 @@
     "preMarkets": "PRE_MARKETS",
     "gridView": "GRID_VIEW",
     "portfolio": "PORTFOLIO",
-    "activity": "ACTIVITY"
+    "activity": "ACTIVITY",
+    "searchPlaceholder": "SEARCH MARKETS...",
+    "connectWallet": "CONNECT_WALLET"
+  },
+  "markets": {
+    "title": "PREDICTION_MARKETS",
+    "lastUpdate": "LAST_UPDATE",
+    "loading": "Loading markets...",
+    "noMarkets": "No markets found",
+    "showing": "SHOWING {count} MARKETS",
+    "filters": {
+      "active": "ACTIVE",
+      "resolved": "RESOLVED",
+      "all": "ALL"
+    },
+    "headers": {
+      "market": "MARKET",
+      "options": "OPTIONS",
+      "endDate": "END_DATE",
+      "liquidity": "LIQUIDITY",
+      "status": "STATUS"
+    },
+    "status": {
+      "active": "ACTIVE",
+      "resolved": "RESOLVED"
+    },
+    "options": {
+      "yes": "YES",
+      "no": "NO",
+      "na": "N/A"
+    },
+    "endDate": {
+      "daysAgo": "{count} days ago",
+      "today": "Today",
+      "days": "{count} days"
+    }
   }
 }

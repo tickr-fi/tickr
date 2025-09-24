@@ -1,0 +1,35 @@
+'use client';
+
+import { useState } from 'react';
+import { MarketTable } from '@/components/features';
+import { Market } from '@/lib/types';
+import { apiRequest } from '@/lib/api/client';
+
+interface MarketsPageClientProps {
+  initialMarkets: Market[];
+}
+
+export function MarketsPageClient({ initialMarkets }: MarketsPageClientProps) {
+  const [markets, setMarkets] = useState<Market[]>(initialMarkets);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleRefresh = async () => {
+    setIsLoading(true);
+    try {
+      const { data } = await apiRequest('/api/markets/all?limit=50');
+      setMarkets(data || []);
+    } catch (error) {
+      console.error('Failed to refresh markets:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <MarketTable 
+      markets={markets} 
+      isLoading={isLoading}
+      onRefresh={handleRefresh}
+    />
+  );
+}

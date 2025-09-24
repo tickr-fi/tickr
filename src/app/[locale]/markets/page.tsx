@@ -1,29 +1,21 @@
 import { setRequestLocale } from 'next-intl/server';
-import { use } from 'react';
-import { SimpleDbTest } from '@/components/features';
+import { marketsController } from '@/lib/controllers';
+import { MarketsPageClient } from './markets-client';
 
 interface Props {
   params: Promise<{ locale: string }>;
 }
 
-export default function MarketsPage({ params }: Props) {
-  const { locale } = use(params);
+export default async function MarketsPage({ params }: Props) {
+  const { locale } = await params;
   setRequestLocale(locale);
 
+  const result = await marketsController.getAllMarkets(20);
+  const markets = result.success ? result.data || [] : [];
+
   return (
-    <main className="container mx-auto px-4 py-16">
-      <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold mb-4 text-foreground font-mono">
-          MARKETS
-        </h1>
-        <p className="text-xl text-muted-foreground max-w-2xl mx-auto font-mono">
-          Discover and analyze prediction markets
-        </p>
-      </div>
-      
-      <div className="max-w-2xl mx-auto">
-        <SimpleDbTest />
-      </div>
+    <main className="w-full px-4 py-4">
+      <MarketsPageClient initialMarkets={markets} />
     </main>
   );
 }

@@ -1,24 +1,24 @@
 'use client';
 
 import { Wallet, Search, Bell, Zap, Grid3X3 } from 'lucide-react';
-import { LanguageSwitcher, ThemeToggle } from '@/components/common';
+import { ThemeToggle } from '@/components/common';
 import { Button, Input } from '@/components/ui';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const navigationItems = [
-  { key: 'markets', href: '/markets', icon: null },
-  { key: 'preMarkets', href: '/pre-markets', icon: Zap },
-  { key: 'gridView', href: '/grid-view', icon: Grid3X3 },
-  { key: 'portfolio', href: '/portfolio', icon: null },
-  { key: 'activity', href: '/activity', icon: null },
+    { key: 'markets', href: '/markets', icon: null },
+    { key: 'preMarkets', href: '/pre-markets', icon: Zap },
+    { key: 'gridView', href: '/grid-view', icon: Grid3X3 },
+    { key: 'portfolio', href: '/portfolio', icon: null },
+    { key: 'activity', href: '/activity', icon: null },
 ];
 
 export function Header() {
     const t = useTranslations('navigation');
     const pathname = usePathname();
-    
+
     return (
         <header className="bg-background border-t border-border border-b border-border px-2 py-2 h-[49px]">
             <div className="flex items-center justify-between h-full">
@@ -57,14 +57,12 @@ export function Header() {
                 {/* Right Side Controls */}
                 <div className="flex items-center gap-4">
                     {/* Theme Toggle */}
-                    <LanguageSwitcher />
-
                     <ThemeToggle />
 
                     {/* Search Bar */}
                     <Input
                         type="text"
-                        placeholder="SEARCH MARKETS..."
+                        placeholder={t('searchPlaceholder')}
                         rightIcon={<Search className="w-4 h-4" />}
                         className="w-60"
                     />
@@ -76,7 +74,7 @@ export function Header() {
 
                     {/* Connect Wallet Button */}
                     <Button icon={<Wallet className="w-4 h-4" />}>
-                        CONNECT_WALLET
+                        {t('connectWallet')}
                     </Button>
                 </div>
             </div>
