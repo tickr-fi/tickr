@@ -1,4 +1,5 @@
-import { useTranslations } from 'next-intl';
+import { useTableOptionsStore } from '@/stores';
+import { calculateMarketOptionValues } from '@/lib/market-utils';
 
 interface MarketOptionsProps {
   options: string[];
@@ -6,84 +7,55 @@ interface MarketOptionsProps {
     [key: string]: {
       tokenMint: string;
       poolAddress: string;
+      name?: string;
       currentPrice?: number;
+      change24h?: number;
     };
   };
 }
 
-function normalize(prices: number[]): [number, number] {
-  const a = prices[0]
-  const b = prices[1]
-  if (a === 0 && b === 0) { return [0, 0] }
-
-  function leadingZeros(n: number): number {
-    const str = n.toString()
-    const match = str.match(/^0\.(0*)[1-9]/)
-    return match ? match[1].length : 0
-  }
-
-  const zeros = Math.min(leadingZeros(a), leadingZeros(b))
-
-  const scale = Math.pow(10, zeros + 2)
-  const fa = parseFloat((a * scale).toFixed(2))
-  const fb = parseFloat((b * scale).toFixed(2))
-
-  return [fa, fb]
-}
-
 export function MarketOptions({ options, cas }: MarketOptionsProps) {
-  const t = useTranslations('markets.options');
-  let displayOptions = options.length >= 2 ? options.slice(0, 2) : [t('yes'), t('no')];
+  const { optionsViewMode } = useTableOptionsStore();
 
-  if (displayOptions.includes(t('yes')) && displayOptions.includes(t('no'))) {
-    displayOptions = [t('yes'), t('no')];
-  }
-  const getOptionColor = (option: string, index: number) => {
-    return index === 0
-      ? 'bg-success/20 text-success hover:bg-success/30'
-      : 'bg-destructive/20 text-destructive hover:bg-destructive/30';
-  };
-
-  const getOptionPrice = (option: string) => {
-    if (!cas) { return 0; }
-    const caseData = cas[option];
-    return caseData?.currentPrice || 0;
-  };
-
-  const normalizedPrices = normalize(displayOptions.map(option => getOptionPrice(option)));
+  const {
+    displayOptions: calculatedDisplayOptions,
+    formattedValues,
+    optionColors,
+    formattedChange,
+    changeColor
+  } = calculateMarketOptionValues(options, cas, optionsViewMode);
 
   return (
-    <div className="grid grid-cols-2 gap-1 w-full max-w-24">
-      {/* Options Row */}
-      <div className="col-span-2 grid grid-cols-2 gap-1">
-        {displayOptions.map((option, index) => (
-          <button
-            key={`option-${index}`}
-            className={`px-1 py-0.5 text-xs font-mono font-medium rounded transition-colors ${getOptionColor(option, index)}`}
-          >
-            {option.toUpperCase()}
-          </button>
-        ))}
-      </div>
+    <div className="flex flex-col gap-1 w-full max-w-40">
+      <div className="grid grid-cols-2 gap-1">
+        {calculatedDisplayOptions.map((option, index) => {
+          const tokenMint = cas?.[option]?.tokenMint;
 
-      {/* Prices Row */}
-      <div className="col-span-2 grid grid-cols-2 gap-1">
-        {displayOptions.map((option, index) => {
-          const price = getOptionPrice(option);
+          const handleClick = () => {
+            if (tokenMint) {
+              window.open(`https://jup.ag/tokens/${tokenMint}`, '_blank');
+            }
+          };
+
           return (
-            <div key={`price-${index}`} className="text-center">
-              {price ? (
-                <div className="text-xs text-muted-foreground font-mono">
-                  {normalizedPrices[index]}%
-                </div>
-              ) : (
-                <div className="text-xs text-muted-foreground font-mono">
-                  {t('na')}
-                </div>
-              )}
-            </div>
+            <button
+              key={`option-${index}`}
+              onClick={handleClick}
+              className={`px-2 py-0.5 text-xs font-mono font-medium rounded transition-colors 
+                cursor-pointer whitespace-nowrap ${optionColors[index]}`}
+            >
+              {formattedValues[index]}
+            </button>
           );
         })}
+      </div>
+
+      <div className="text-center">
+        {formattedChange ? (
+          <div className={`text-[10px] font-mono ${changeColor} whitespace-nowrap`}>
+            {formattedChange}
+          </div>
+        ) : null}
       </div>
     </div>
   );

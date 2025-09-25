@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { cn } from '@/lib';
 
 interface ButtonProps {
-  children: ReactNode;
+  children?: ReactNode;
   icon?: ReactNode;
   variant?: 'primary' | 'secondary' | 'outline';
   size?: 'sm' | 'md' | 'lg';
@@ -22,11 +22,19 @@ export function Button({
   type = 'button',
   disabled = false,
 }: ButtonProps) {
-    const baseClasses = 'inline-flex items-center justify-center gap-2 font-mono font-medium transition-colors cursor-pointer focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed h-7';
-  
+  const baseClasses = cn(
+    'inline-flex items-center justify-center gap-2 font-mono font-medium',
+    'transition-colors cursor-pointer focus:outline-none',
+    'disabled:opacity-50 disabled:cursor-not-allowed h-7'
+  );
+
   const variantClasses = {
     primary: 'bg-primary hover:opacity-90 text-primary-foreground',
-    secondary: 'bg-[#242424] hover:bg-[#2a2a2a] text-[#cccccc]',
+    secondary: cn(
+      'bg-secondary hover:bg-primary hover:text-primary-foreground',
+      'hover:border-primary text-secondary-foreground border border-border',
+      'hover:scale-105 transition-all duration-200'
+    ),
     outline: 'border border-primary text-primary hover:bg-primary hover:text-primary-foreground',
   };
   

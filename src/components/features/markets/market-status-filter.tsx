@@ -1,11 +1,8 @@
 import { useTranslations } from 'next-intl';
+import { useTableOptionsStore } from '@/stores';
 
-interface MarketTableFiltersProps {
-  selectedFilter: 'ACTIVE' | 'RESOLVED' | 'ALL';
-  onFilterChange: (filter: 'ACTIVE' | 'RESOLVED' | 'ALL') => void;
-}
-
-export function MarketTableFilters({ selectedFilter, onFilterChange }: MarketTableFiltersProps) {
+export function MarketStatusFilter() {
+  const { statusFilter, setStatusFilter } = useTableOptionsStore();
   const t = useTranslations('markets.filters');
   const filters = [
     { key: 'ACTIVE' as const, label: t('active') },
@@ -18,12 +15,11 @@ export function MarketTableFilters({ selectedFilter, onFilterChange }: MarketTab
       {filters.map((filter) => (
         <button
           key={filter.key}
-          onClick={() => onFilterChange(filter.key)}
-          className={`px-2 py-1 text-xs font-mono font-medium transition-colors rounded cursor-pointer ${
-            selectedFilter === filter.key
+          onClick={() => setStatusFilter(filter.key)}
+          className={`px-2 py-1 text-xs font-mono font-medium transition-colors rounded cursor-pointer ${statusFilter === filter.key
               ? 'bg-primary text-primary-foreground'
               : 'bg-muted text-muted-foreground hover:bg-secondary hover:text-foreground'
-          }`}
+            }`}
         >
           {filter.label}
         </button>

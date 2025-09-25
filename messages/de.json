@@ -6,11 +6,12 @@
   "navigation": {
     "markets": "MÄRKTE",
     "preMarkets": "VORMÄRKTE",
-    "gridView": "RASTER_ANSICHT",
+    "gridView": "GRID_ANSICHT",
     "portfolio": "PORTFOLIO",
     "activity": "AKTIVITÄT",
     "searchPlaceholder": "MÄRKTE SUCHEN...",
-    "connectWallet": "WALLET_VERBINDEN"
+    "connectWallet": "WALLET_VERBINDEN",
+    "comingSoon": "BALD VERFÜGBAR"
   },
   "markets": {
     "title": "VORHERSAGEMÄRKTE",
@@ -23,12 +24,28 @@
       "resolved": "ABGESCHLOSSEN",
       "all": "ALLE"
     },
+    "sorting": {
+      "expiringSoon": "Bald abgelaufen",
+      "expiringLater": "Später abgelaufen",
+      "alphabetical": "Alphabetisch",
+      "highestLiquidity": "Liquidität"
+    },
     "headers": {
       "market": "MARKT",
-      "options": "OPTIONEN",
-      "endDate": "ENDDATUM",
+      "odds": "QUOTEN",
+      "prices": "PREISE",
+      "expires": "LÄUFT_AB",
       "liquidity": "LIQUIDITÄT",
-      "status": "STATUS"
+      "status": "STATUS",
+      "actions": "AKTIONEN"
+    },
+    "optionsViewMode": {
+      "odds": "QUOTEN",
+      "prices": "PREISE"
+    },
+    "viewMode": {
+      "table": "TABELLE",
+      "cards": "KARTEN"
     },
     "status": {
       "active": "AKTIV",
@@ -43,6 +60,33 @@
       "daysAgo": "vor {count} Tagen",
       "today": "Heute",
       "days": "{count} Tage"
+    },
+    "advancedFilters": {
+      "title": "MÄRKTE FILTERN",
+      "button": "FILTERN",
+      "reset": "ZURÜCKSETZEN",
+      "expiryTimeframe": "ABLAUFZEITRAUM",
+      "minLiquidity": "MIN. LIQUIDITÄT",
+      "hideIlliquidMarkets": "ILLIQUIDE MÄRKTE AUSBLENDEN",
+      "timeframes": {
+        "all": "Alle Zeiträume",
+        "24h": "Nächste 24 Stunden",
+        "7d": "Nächste 7 Tage",
+        "30d": "Nächste 30 Tage"
+      },
+      "liquidity": {
+        "any": "Beliebige Liquidität",
+        "10k": "10.000$+",
+        "50k": "50.000$+",
+        "100k": "100.000$+"
+      }
+    },
+    "card": {
+      "liquidity": "LIQUIDITÄT",
+      "watch": "BEACHTEN",
+      "share": "TEILEN",
+      "trade": "HANDELN",
+      "expired": "ABGELAUFEN"
     }
   }
 }

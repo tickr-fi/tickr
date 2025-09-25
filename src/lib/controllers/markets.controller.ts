@@ -1,5 +1,5 @@
 import { pmxApi, railwayApi, pmxSupabaseApi } from '@/lib/api';
-import { PMXApiResponse, PMXMarket, Market, ApiResponse, PMXSupabaseMarket } from '@/lib/types';
+import { PMXApiResponse, PMXMarket, Market, ApiResponse, PMXSupabaseMarket, HistoricalPriceResponse } from '@/lib/types';
 
 export class MarketsController {
 
@@ -71,21 +71,38 @@ export class MarketsController {
       }
     });
 
+    // Fetch historical prices for YES options only
+    const yesTokenMints = this.getYesOptionTokenMints(markets);
+    const change24hMap = await this.fetchHistoricalPrices(yesTokenMints, priceMap);
+
     const data = markets.map((market) => {
       
       const enhancedCas: typeof market.cas = {};
       Object.entries(market.cas).forEach(([key, ca]) => {
         const tokenMint = ca.tokenMint;
         const currentPrice = priceMap.get(tokenMint);
+        const change24h = change24hMap.get(tokenMint);
         
         enhancedCas[key] = {
           ...ca,
-          currentPrice
+          currentPrice,
+          change24h
         };
       });
 
       const supabaseData = supabaseMap.get(market.slug);
       const mappedData = supabaseData ? this.mapSupabaseData(supabaseData) : {};
+
+      if (supabaseData?.options) {
+        Object.entries(supabaseData.options).forEach(([optionKey, optionData]) => {
+          if (enhancedCas[optionKey]) {
+            enhancedCas[optionKey] = {
+              ...enhancedCas[optionKey],
+              name: optionData.name
+            };
+          }
+        });
+      }
 
       const today = new Date();
       const end = new Date(market.end_date);
@@ -108,7 +125,7 @@ export class MarketsController {
   }
 
   private mapSupabaseData(supabaseData: PMXSupabaseMarket) {
-    const { image_urls, limit } = supabaseData;
+    const { image_urls, limit, created_at } = supabaseData;
     
     const marketImageUrl = typeof image_urls.market === 'string' 
       ? image_urls.market 
@@ -126,7 +143,8 @@ export class MarketsController {
     return {
       marketImageUrl,
       optionImagesUrl,
-      limit
+      limit,
+      createdAt: created_at
     };
   }
 
@@ -137,6 +155,69 @@ export class MarketsController {
       .replace(/\s+/g, '-')
       .replace(/-+/g, '-')
       .trim();
+  }
+
+  private getYesOptionTokenMints(markets: Market[]): string[] {
+    return markets
+      .flatMap(market => Object.entries(market.cas))
+      .filter(([key]) => key === 'YES')
+      .map(([, ca]) => ca.tokenMint);
+  }
+
+  private async fetchHistoricalPrices(tokenMints: string[], priceMap: Map<string, number>): Promise<Map<string, number>> {
+    const change24hMap = new Map<string, number>();
+    
+    if (tokenMints.length === 0) {
+      return change24hMap;
+    }
+
+    const historicalPromises = tokenMints.map(tokenMint =>
+      railwayApi.getHistoricalPrice(tokenMint, 25).catch(() => ({ success: false, data: null }))
+    );
+
+    const historicalResults = await Promise.all(historicalPromises);
+
+    tokenMints.forEach((tokenMint, index) => {
+      const result = historicalResults[index];
+      const currentPrice = priceMap.get(tokenMint);
+      
+      if (result.success && result.data && currentPrice !== undefined) {
+        const change24h = this.calculate24hChange(result.data, currentPrice);
+        change24hMap.set(tokenMint, change24h);
+      }
+    });
+
+    return change24hMap;
+  }
+
+  private calculate24hChange(historicalData: HistoricalPriceResponse, currentPrice: number): number {
+    if (!historicalData.historicalData || historicalData.historicalData.length === 0) {
+      return 0;
+    }
+
+    const now = new Date();
+    const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    
+    // Find the closest data point to 24 hours ago
+    let closestPoint = historicalData.historicalData[0];
+    let minTimeDiff = Math.abs(new Date(closestPoint.timestamp).getTime() - twentyFourHoursAgo.getTime());
+
+    for (const point of historicalData.historicalData) {
+      const timeDiff = Math.abs(new Date(point.timestamp).getTime() - twentyFourHoursAgo.getTime());
+      if (timeDiff < minTimeDiff) {
+        minTimeDiff = timeDiff;
+        closestPoint = point;
+      }
+    }
+
+    const price24hAgo = closestPoint.price;
+
+    if (price24hAgo === 0) {
+      return 0;
+    }
+
+    // Calculate percentage change using the current price we already loaded
+    return ((currentPrice - price24hAgo) / price24hAgo) * 100;
   }
 }
 

@@ -1,9 +1,13 @@
 import { Market } from '@/lib/types';
-import { Star } from 'lucide-react';
+import { Star, Clock } from 'lucide-react';
 import Image from 'next/image';
 import { MarketStatusBadge } from '@/components/features/markets/market-status-badge';
 import { MarketOptions } from '@/components/features/markets/market-options';
 import { MarketEndDate } from '@/components/features/markets/market-end-date';
+import { MarketLiquidity } from '@/components/features/markets/market-liquidity';
+import { MarketTableActions } from '@/components/features/markets/market-table-actions';
+import { cn } from '@/lib';
+import { getMarketImageUrl, formatDurationSinceCreation } from '@/lib/market-utils';
 
 interface MarketRowProps {
   market: Market;
@@ -13,24 +17,25 @@ export function MarketRow({ market }: MarketRowProps) {
   const daysRemaining = market.daysRemaining || 0;
 
   return (
-    <div className="px-3 py-3 hover:bg-muted/50 transition-colors grid grid-cols-12 gap-4 items-center text-xs font-mono w-full">
+    <div className={cn(
+      'px-3 py-3 hover:bg-secondary-background transition-colors cursor-pointer',
+      'grid grid-cols-12 gap-4 items-center text-xs font-mono w-full'
+    )}>
       {/* Market Column */}
-      <div className="col-span-5 flex items-start gap-3 pr-8">
-        <button className="mt-1 hover:text-primary transition-colors">
+      <div className="col-span-5 flex items-center gap-3 pr-8">
+        <button className="hover:text-primary transition-colors">
           <Star className="w-3 h-3 text-muted-foreground hover:text-primary" />
         </button>
-        
+
         <div className="flex-1 min-w-0 flex gap-3">
           {/* Market image */}
           <div className="w-8 h-8 rounded overflow-hidden flex-shrink-0">
             {(() => {
-              const marketImage = market.marketImageUrl;
-              const firstOptionImage = market.optionImagesUrl ? Object.values(market.optionImagesUrl)[0] : undefined;
-              const imageUrl = marketImage || firstOptionImage;
-              
+              const imageUrl = getMarketImageUrl(market);
+
               return imageUrl ? (
-                <Image 
-                  src={imageUrl} 
+                <Image
+                  src={imageUrl}
                   alt={market.title}
                   width={32}
                   height={32}
@@ -43,46 +48,49 @@ export function MarketRow({ market }: MarketRowProps) {
               );
             })()}
           </div>
-          
+
           {/* Title and description */}
           <div className="flex-1 min-w-0">
-            <h3 className="font-medium text-foreground truncate text-xs mb-1">
+            <h3 className="font-medium text-foreground truncate text-sm mb-1">
               {market.title}
             </h3>
-            <p className="text-xs text-muted-foreground truncate max-w-[400px]">
-              {market.description}
-            </p>
+            <div className="flex items-center gap-1">
+              <Clock className="w-3 h-3 text-muted-foreground" />
+              <span className="text-xs text-muted-foreground font-mono">
+                {formatDurationSinceCreation(market.createdAt)}
+              </span>
+            </div>
           </div>
         </div>
       </div>
-      
+
       {/* Options Column */}
       <div className="col-span-2 flex justify-center">
         <MarketOptions options={market.options} cas={market.cas} />
       </div>
-      
+
       {/* End Date Column */}
-      <div className="col-span-2 flex justify-end">
-        <MarketEndDate 
+      <div className="col-span-2 flex justify-center">
+        <MarketEndDate
           endDate={market.end_date}
           daysRemaining={daysRemaining}
+          createdAt={market.createdAt}
         />
       </div>
-      
+
       {/* Liquidity Column */}
-      <div className="col-span-2 flex justify-end">
-        <div className="text-right">
-          {market.limit && (
-            <div className="text-xs text-foreground font-medium">
-              ${market.limit.toLocaleString()}
-            </div>
-          )}
-        </div>
+      <div className="col-span-1 flex justify-center">
+        <MarketLiquidity limit={market.limit} />
       </div>
-      
+
       {/* Status Column */}
       <div className="col-span-1 flex justify-center">
         <MarketStatusBadge resolved={market.resolved} />
+      </div>
+
+      {/* Actions Column */}
+      <div className="col-span-1 flex justify-center">
+        <MarketTableActions marketSlug={market.slug} />
       </div>
     </div>
   );

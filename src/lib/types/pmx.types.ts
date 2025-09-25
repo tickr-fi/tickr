@@ -8,7 +8,9 @@ export interface PMXMarket {
     [key: string]: {
       tokenMint: string;
       poolAddress: string;
-      currentPrice?: number; // Current price for this specific case/option
+      name?: string;
+      currentPrice?: number;
+      change24h?: number;
     };
   };
 }
@@ -30,7 +32,7 @@ export interface PMXSingleMarketResponse {
   data: PMXMarket;
 }
 
-export interface RailwayPriceResponse {
+export interface PriceResponse {
   success: boolean;
   price: string;
   timestamp: string;
@@ -39,12 +41,35 @@ export interface RailwayPriceResponse {
   source: string;
 }
 
+export interface HistoricalDataPoint {
+  timestamp: string;
+  price: number;
+  volume: number;
+  market_cap: number;
+}
+
+export interface HistoricalPriceResponse {
+  success: boolean;
+  historicalData: HistoricalDataPoint[];
+  count: number;
+  tokenMint: string;
+  hasCurrentPrice: boolean;
+}
+
 export interface PMXSupabaseMarket {
   name: string;
   image_urls: {
     [key: string]: string | { url: string }
   };
   limit: number;
+  created_at: string;
+  options: {
+    [key: string]: {
+      name: string;
+      ticker: string;
+      metadata_url: string;
+    };
+  };
 }
 
 // Internal market type
@@ -55,5 +80,6 @@ export interface Market extends PMXMarket {
     [key: string]: string;
   };
   limit?: number;
+  createdAt?: string;
   daysRemaining?: number;
 }

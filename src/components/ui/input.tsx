@@ -44,6 +44,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           <input
             ref={ref}
             className={inputClasses}
+            suppressHydrationWarning
             {...props}
           />
           {rightIcon && (
@@ -59,6 +60,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       <input
         ref={ref}
         className={inputClasses}
+        suppressHydrationWarning
         {...props}
       />
     );

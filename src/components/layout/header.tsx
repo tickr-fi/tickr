@@ -1,23 +1,24 @@
 'use client';
 
-import { Wallet, Search, Bell, Zap, Grid3X3 } from 'lucide-react';
+import { Search, BarChart2, Grid3X3, Tag, Activity } from 'lucide-react';
 import { ThemeToggle } from '@/components/common';
-import { Button, Input } from '@/components/ui';
+import { Input } from '@/components/ui';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useTableOptionsStore } from '@/stores';
 
 const navigationItems = [
-    { key: 'markets', href: '/markets', icon: null },
-    { key: 'preMarkets', href: '/pre-markets', icon: Zap },
-    { key: 'gridView', href: '/grid-view', icon: Grid3X3 },
-    { key: 'portfolio', href: '/portfolio', icon: null },
-    { key: 'activity', href: '/activity', icon: null },
+    { key: 'markets', href: '/markets', icon: BarChart2, comingSoon: false },
+    { key: 'gridView', href: '/grid-view', icon: Grid3X3, comingSoon: false },
+    { key: 'portfolio', href: '/portfolio', icon: Tag, comingSoon: true },
+    { key: 'activity', href: '/activity', icon: Activity, comingSoon: true },
 ];
 
 export function Header() {
     const t = useTranslations('navigation');
     const pathname = usePathname();
+    const { searchQuery, setSearchQuery } = useTableOptionsStore();
 
     return (
         <header className="bg-background border-t border-border border-b border-border px-2 py-2 h-[49px]">
@@ -40,15 +41,21 @@ export function Header() {
                             const Icon = item.icon;
                             const isActive = pathname.endsWith(item.href);
                             return (
-                                <Link
-                                    key={item.key}
-                                    href={item.href}
-                                    className={`font-mono text-xs font-medium leading-4 transition-colors ${Icon ? 'flex items-center gap-2' : ''
-                                        } ${isActive ? 'text-foreground' : 'text-muted-foreground hover:text-primary'}`}
-                                >
-                                    {Icon && <Icon className="w-4 h-4 text-primary" />}
-                                    {t(item.key)}
-                                </Link>
+                                <div key={item.key} className="flex items-center gap-2">
+                                    <Link
+                                        href={item.href}
+                                        className={`font-mono text-xs font-medium leading-4 transition-colors 
+                                            flex items-center gap-2 ${isActive ? 'text-foreground' : 'text-muted-foreground hover:text-primary'}`}
+                                    >
+                                        <Icon className="w-3 h-3" />
+                                        {t(item.key)}
+                                    </Link>
+                                    {item.comingSoon && (
+                                        <span className="bg-secondary text-muted-foreground text-[10px] px-1.5 py-0.5 rounded font-mono">
+                                            {t('comingSoon')}
+                                        </span>
+                                    )}
+                                </div>
                             );
                         })}
                     </nav>
@@ -65,17 +72,10 @@ export function Header() {
                         placeholder={t('searchPlaceholder')}
                         rightIcon={<Search className="w-4 h-4" />}
                         className="w-60"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
                     />
 
-                    <div className="relative">
-                        <Bell className="w-5 h-5 text-foreground cursor-pointer hover:text-primary transition-colors" />
-                        <div className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full"></div>
-                    </div>
-
-                    {/* Connect Wallet Button */}
-                    <Button icon={<Wallet className="w-4 h-4" />}>
-                        {t('connectWallet')}
-                    </Button>
                 </div>
             </div>
         </header>

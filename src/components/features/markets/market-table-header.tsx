@@ -1,5 +1,6 @@
 import { Star } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { useTableOptionsStore } from '@/stores';
 
 interface ColumnConfig {
   key: string;
@@ -11,7 +12,7 @@ interface ColumnConfig {
   padding?: string;
 }
 
-const getColumns = (t: any): ColumnConfig[] => [
+const getColumns = (t: any, optionsViewMode: string): ColumnConfig[] => [
   {
     key: 'market',
     label: t('market'),
@@ -21,26 +22,32 @@ const getColumns = (t: any): ColumnConfig[] => [
     padding: 'pr-8'
   },
   {
-    key: 'options',
-    label: t('options'),
+    key: 'odds',
+    label: optionsViewMode === 'prices' ? t('prices') : t('odds'),
     span: 2,
     justify: 'center'
   },
   {
-    key: 'endDate',
-    label: t('endDate'),
+    key: 'expires',
+    label: t('expires'),
     span: 2,
-    justify: 'end'
+    justify: 'center'
   },
   {
     key: 'liquidity',
     label: t('liquidity'),
-    span: 2,
-    justify: 'end'
+    span: 1,
+    justify: 'center'
   },
   {
     key: 'status',
     label: t('status'),
+    span: 1,
+    justify: 'center'
+  },
+  {
+    key: 'actions',
+    label: t('actions'),
     span: 1,
     justify: 'center'
   }
@@ -48,7 +55,8 @@ const getColumns = (t: any): ColumnConfig[] => [
 
 export function MarketTableHeader() {
   const t = useTranslations('markets.headers');
-  const columns = getColumns(t);
+  const { optionsViewMode } = useTableOptionsStore();
+  const columns = getColumns(t, optionsViewMode);
 
   return (
     <div className="bg-muted px-3 py-2 border-b border-border">
