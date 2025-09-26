@@ -40,7 +40,7 @@ export function MarketHeader({
   return (
     <>
       {/* Header Section */}
-      <div className="flex items-center justify-between mb-4 px-2">
+      <div className="flex items-center justify-between mb-4 px-1">
         <div className="flex items-center gap-3">
           <h1 className="text-lg font-mono font-bold text-foreground">
             {t('title')}
@@ -80,7 +80,7 @@ export function MarketHeader({
 
       {/* Advanced Filters Section */}
       {showAdvancedFilters && (
-        <div className="mb-4 px-2">
+        <div className="mb-4">
           <MarketAdvancedFilters />
         </div>
       )}
