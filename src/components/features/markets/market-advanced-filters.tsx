@@ -1,6 +1,6 @@
 'use client';
 
-import { X, RotateCcw, Clock, DollarSign, Eye } from 'lucide-react';
+import { X, RotateCcw, Clock, DollarSign, Eye, TrendingUp } from 'lucide-react';
 import { useTableOptionsStore, TimeFrameFilter, LiquidityFilter } from '@/stores';
 import { useTranslations } from 'next-intl';
 import { Dropdown, DropdownOption } from '@/components/ui/dropdown';
@@ -15,6 +15,8 @@ export function MarketAdvancedFilters() {
     setLiquidityFilter,
     hideIlliquidMarkets,
     setHideIlliquidMarkets,
+    showMovers10Percent,
+    setShowMovers10Percent,
     setShowAdvancedFilters,
   } = useTableOptionsStore();
 
@@ -36,6 +38,7 @@ export function MarketAdvancedFilters() {
     setTimeFrameFilter('all');
     setLiquidityFilter('any');
     setHideIlliquidMarkets(false);
+    setShowMovers10Percent(false);
   };
 
   const handleClose = () => {
@@ -95,22 +98,43 @@ export function MarketAdvancedFilters() {
           />
         </div>
 
-        {/* Hide Illiquid Markets Checkbox */}
-        <div className="flex-1 flex items-center gap-2 pt-4 md:pt-6">
-          <input
-            type="checkbox"
-            id="hideIlliquid"
-            checked={hideIlliquidMarkets}
-            onChange={(e) => {
-              setHideIlliquidMarkets(e.target.checked);
-              e.target.blur();
-            }}
-            className="w-4 h-4 text-orange-500 bg-secondary-background border-border rounded focus:ring-orange-500 focus:ring-2 cursor-pointer"
-          />
-          <label htmlFor="hideIlliquid" className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground">
-            <Eye className="w-3 h-3" />
+        {/* Checkboxes Column */}
+        <div className="flex-1 flex flex-col gap-3">
+          {/* Hide Illiquid Markets Checkbox */}
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="hideIlliquid"
+              checked={hideIlliquidMarkets}
+              onChange={(e) => {
+                setHideIlliquidMarkets(e.target.checked);
+                e.target.blur();
+              }}
+              className="w-4 h-4 text-orange-500 bg-secondary-background border-border rounded focus:ring-orange-500 focus:ring-2 cursor-pointer"
+            />
+            <label htmlFor="hideIlliquid" className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground">
+              <Eye className="w-3 h-3" />
 {t('hideIlliquidMarkets')}
-          </label>
+            </label>
+          </div>
+
+          {/* Movers 10% Checkbox */}
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="showMovers"
+              checked={showMovers10Percent}
+              onChange={(e) => {
+                setShowMovers10Percent(e.target.checked);
+                e.target.blur();
+              }}
+              className="w-4 h-4 text-orange-500 bg-secondary-background border-border rounded focus:ring-orange-500 focus:ring-2 cursor-pointer"
+            />
+            <label htmlFor="showMovers" className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground">
+              <TrendingUp className="w-3 h-3" />
+{t('showMovers10Percent')}
+            </label>
+          </div>
         </div>
       </div>
     </div>

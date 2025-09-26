@@ -58,6 +58,7 @@ export interface HistoricalPriceResponse {
 
 export interface PMXSupabaseMarket {
   name: string;
+  slug: string;
   image_urls: {
     [key: string]: string | { url: string }
   };

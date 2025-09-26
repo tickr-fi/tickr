@@ -10,11 +10,12 @@ export function MarketFilterButton() {
     timeFrameFilter,
     liquidityFilter,
     hideIlliquidMarkets,
+    showMovers10Percent,
     showAdvancedFilters,
     setShowAdvancedFilters,
   } = useTableOptionsStore();
 
-  const hasActiveFilters = timeFrameFilter !== 'all' || liquidityFilter !== 'any' || hideIlliquidMarkets;
+  const hasActiveFilters = timeFrameFilter !== 'all' || liquidityFilter !== 'any' || hideIlliquidMarkets || showMovers10Percent;
 
   return (
     <button

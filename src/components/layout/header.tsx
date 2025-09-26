@@ -1,6 +1,6 @@
 'use client';
 
-import { Search, BarChart2, Grid3X3, Tag, Activity } from 'lucide-react';
+import { Search, BarChart2, Tag, Activity } from 'lucide-react';
 import { ThemeToggle } from '@/components/common';
 import { Input } from '@/components/ui';
 import { useTranslations } from 'next-intl';
@@ -10,7 +10,7 @@ import { useTableOptionsStore } from '@/stores';
 
 const navigationItems = [
     { key: 'markets', href: '/markets', icon: BarChart2, comingSoon: false },
-    { key: 'gridView', href: '/grid-view', icon: Grid3X3, comingSoon: false },
+    // { key: 'gridView', href: '/grid-view', icon: Grid3X3, comingSoon: false },
     { key: 'portfolio', href: '/portfolio', icon: Tag, comingSoon: true },
     { key: 'activity', href: '/activity', icon: Activity, comingSoon: true },
 ];
@@ -35,8 +35,8 @@ export function Header() {
                         <div className="w-0.5 h-6 bg-primary cursor-flicker"></div>
                     </Link>
 
-                    {/* Navigation Links */}
-                    <nav className="flex items-center gap-6">
+                    {/* Navigation Links - Hidden on mobile */}
+                    <nav className="hidden lg:flex items-center gap-6">
                         {navigationItems.map((item) => {
                             const Icon = item.icon;
                             const isActive = pathname.endsWith(item.href);
@@ -66,15 +66,17 @@ export function Header() {
                     {/* Theme Toggle */}
                     <ThemeToggle />
 
-                    {/* Search Bar */}
-                    <Input
-                        type="text"
-                        placeholder={t('searchPlaceholder')}
-                        rightIcon={<Search className="w-4 h-4" />}
-                        className="w-60"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                    />
+                    {/* Search Bar - Hidden on mobile */}
+                    <div className="hidden lg:block">
+                        <Input
+                            type="text"
+                            placeholder={t('searchPlaceholder')}
+                            rightIcon={<Search className="w-4 h-4" />}
+                            className="w-60"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                    </div>
 
                 </div>
             </div>

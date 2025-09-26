@@ -19,16 +19,20 @@
     "loading": "Loading markets...",
     "noMarkets": "No markets found",
     "showing": "SHOWING {count} MARKETS",
+    "copyError": "Failed to copy",
+    "linkCopied": "Market link copied!",
     "filters": {
       "active": "ACTIVE",
       "resolved": "RESOLVED",
-      "all": "ALL"
+      "all": "ALL",
+      "title": "STATUS FILTER"
     },
     "sorting": {
       "expiringSoon": "Expiring Soon",
       "expiringLater": "Expiring Later",
       "alphabetical": "Alphabetical",
-      "highestLiquidity": "Liquidity"
+      "highestLiquidity": "Liquidity",
+      "title": "SORT BY"
     },
     "headers": {
       "market": "MARKET",
@@ -41,11 +45,13 @@
     },
     "optionsViewMode": {
       "odds": "ODDS",
-      "prices": "PRICES"
+      "prices": "PRICES",
+      "title": "OPTIONS VIEW"
     },
     "viewMode": {
       "table": "TABLE",
-      "cards": "CARDS"
+      "cards": "CARDS",
+      "title": "VIEW MODE"
     },
     "status": {
       "active": "ACTIVE",
@@ -64,10 +70,13 @@
     "advancedFilters": {
       "title": "FILTER MARKETS",
       "button": "FILTER",
+      "showFilters": "SHOW FILTERS",
+      "options": "OPTIONS",
       "reset": "RESET",
       "expiryTimeframe": "EXPIRY TIMEFRAME",
       "minLiquidity": "MIN LIQUIDITY",
       "hideIlliquidMarkets": "HIDE ILLIQUID MARKETS",
+      "showMovers10Percent": "MOVERS ≥10% (24H)",
       "timeframes": {
         "all": "All Timeframes",
         "24h": "Next 24 Hours",

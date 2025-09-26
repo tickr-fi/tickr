@@ -32,11 +32,17 @@ interface TableOptionsState {
   hideIlliquidMarkets: boolean;
   setHideIlliquidMarkets: (hide: boolean) => void;
   
+  showMovers10Percent: boolean;
+  setShowMovers10Percent: (show: boolean) => void;
+  
   showAdvancedFilters: boolean;
   setShowAdvancedFilters: (show: boolean) => void;
   
   lastUpdate: Date | null;
   setLastUpdate: (date: Date | null) => void;
+  
+  showMobileMenu: boolean;
+  setShowMobileMenu: (show: boolean) => void;
 }
 
 export const useTableOptionsStore = create<TableOptionsState>()((set) => ({
@@ -49,8 +55,10 @@ export const useTableOptionsStore = create<TableOptionsState>()((set) => ({
   timeFrameFilter: 'all',
   liquidityFilter: 'any',
   hideIlliquidMarkets: false,
+  showMovers10Percent: false,
   showAdvancedFilters: false,
   lastUpdate: null,
+  showMobileMenu: false,
   
   // Actions
   setSelectedSort: (sort) => set({ selectedSort: sort }),
@@ -61,6 +69,8 @@ export const useTableOptionsStore = create<TableOptionsState>()((set) => ({
   setTimeFrameFilter: (filter) => set({ timeFrameFilter: filter }),
   setLiquidityFilter: (filter) => set({ liquidityFilter: filter }),
   setHideIlliquidMarkets: (hide) => set({ hideIlliquidMarkets: hide }),
+  setShowMovers10Percent: (show) => set({ showMovers10Percent: show }),
   setShowAdvancedFilters: (show) => set({ showAdvancedFilters: show }),
   setLastUpdate: (date) => set({ lastUpdate: date }),
+  setShowMobileMenu: (show) => set({ showMobileMenu: show }),
 }));

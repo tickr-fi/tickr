@@ -37,20 +37,23 @@ export class MarketsController {
   }
 
   private async processData(pmxMarkets: PMXMarket[], supabaseData?: PMXSupabaseMarket[]): Promise<Market[]> {
-    const markets: Market[] = pmxMarkets.map((market) => {
-      return {
-        ...market,
-        slug: this.generateSlug(market.title)
-      };
-    });
-
-    const supabaseMap = new Map<string, PMXSupabaseMarket>();
+    const supabaseMapByName = new Map<string, PMXSupabaseMarket>();
     if (supabaseData) {
       supabaseData.forEach((supabaseMarket) => {
-        const slug = this.generateSlug(supabaseMarket.name);
-        supabaseMap.set(slug, supabaseMarket);
+        supabaseMapByName.set(supabaseMarket.name, supabaseMarket);
       });
     }
+
+    const markets: Market[] = pmxMarkets.map((market) => {
+      const matchingSupabaseMarket = supabaseMapByName.get(market.title);
+      const mappedData = matchingSupabaseMarket ? this.mapSupabaseData(matchingSupabaseMarket) : {};
+
+      return {
+        ...market,
+        slug: matchingSupabaseMarket?.slug || '',
+        ...mappedData
+      };
+    });
 
     const tokenMint = markets.flatMap(market => 
       Object.values(market.cas).map(ca => ca.tokenMint)
@@ -59,7 +62,6 @@ export class MarketsController {
     const pricePromises = tokenMint.map(address => 
       railwayApi.getPrice(address).catch(() => ({ success: false, data: null }))
     );
-
     const priceResults = await Promise.all(pricePromises);
 
     const priceMap = new Map<string, number>();
@@ -75,8 +77,7 @@ export class MarketsController {
     const yesTokenMints = this.getYesOptionTokenMints(markets);
     const change24hMap = await this.fetchHistoricalPrices(yesTokenMints, priceMap);
 
-    const data = markets.map((market) => {
-      
+    const enhancedMarkets = markets.map((market) => {
       const enhancedCas: typeof market.cas = {};
       Object.entries(market.cas).forEach(([key, ca]) => {
         const tokenMint = ca.tokenMint;
@@ -90,11 +91,9 @@ export class MarketsController {
         };
       });
 
-      const supabaseData = supabaseMap.get(market.slug);
-      const mappedData = supabaseData ? this.mapSupabaseData(supabaseData) : {};
-
-      if (supabaseData?.options) {
-        Object.entries(supabaseData.options).forEach(([optionKey, optionData]) => {
+      const matchingSupabaseMarket = supabaseMapByName.get(market.title);
+      if (matchingSupabaseMarket?.options) {
+        Object.entries(matchingSupabaseMarket.options).forEach(([optionKey, optionData]) => {
           if (enhancedCas[optionKey]) {
             enhancedCas[optionKey] = {
               ...enhancedCas[optionKey],
@@ -112,12 +111,11 @@ export class MarketsController {
       return {
         ...market,
         cas: enhancedCas,
-        ...mappedData,
         daysRemaining
       };
     });
 
-    return data.sort((a, b) => {
+    return enhancedMarkets.sort((a, b) => {
       const dateA = new Date(a.end_date).getTime();
       const dateB = new Date(b.end_date).getTime();
       return dateA - dateB;
@@ -146,15 +144,6 @@ export class MarketsController {
       limit,
       createdAt: created_at
     };
-  }
-
-  private generateSlug(title: string): string {
-    return title
-      .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, '')
-      .replace(/\s+/g, '-')
-      .replace(/-+/g, '-')
-      .trim();
   }
 
   private getYesOptionTokenMints(markets: Market[]): string[] {

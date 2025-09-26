@@ -19,16 +19,20 @@
     "loading": "Märkte werden geladen...",
     "noMarkets": "Keine Märkte gefunden",
     "showing": "{count} MÄRKTE ANGEZEIGT",
+    "copyError": "Kopieren fehlgeschlagen",
+    "linkCopied": "Markt-Link kopiert!",
     "filters": {
       "active": "AKTIV",
       "resolved": "ABGESCHLOSSEN",
-      "all": "ALLE"
+      "all": "ALLE",
+      "title": "STATUS FILTER"
     },
     "sorting": {
       "expiringSoon": "Bald abgelaufen",
       "expiringLater": "Später abgelaufen",
       "alphabetical": "Alphabetisch",
-      "highestLiquidity": "Liquidität"
+      "highestLiquidity": "Liquidität",
+      "title": "SORTIEREN NACH"
     },
     "headers": {
       "market": "MARKT",
@@ -41,11 +45,14 @@
     },
     "optionsViewMode": {
       "odds": "QUOTEN",
-      "prices": "PREISE"
+      "prices": "PREISE",
+      "title": "OPTIONEN ANSICHT"
     },
     "viewMode": {
       "table": "TABELLE",
-      "cards": "KARTEN"
+      "cards": "KARTEN",
+      "autoCards": "Automatisch zu Karten für Mobile gewechselt",
+      "title": "ANSICHTSMODUS"
     },
     "status": {
       "active": "AKTIV",
@@ -64,10 +71,13 @@
     "advancedFilters": {
       "title": "MÄRKTE FILTERN",
       "button": "FILTERN",
+      "showFilters": "FILTER ANZEIGEN",
+      "options": "OPTIONEN",
       "reset": "ZURÜCKSETZEN",
       "expiryTimeframe": "ABLAUFZEITRAUM",
       "minLiquidity": "MIN. LIQUIDITÄT",
       "hideIlliquidMarkets": "ILLIQUIDE MÄRKTE AUSBLENDEN",
+      "showMovers10Percent": "BEWEGER ≥10% (24H)",
       "timeframes": {
         "all": "Alle Zeiträume",
         "24h": "Nächste 24 Stunden",

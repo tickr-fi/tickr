@@ -1,5 +1,6 @@
 import { useTableOptionsStore } from '@/stores';
 import { calculateMarketOptionValues } from '@/lib/market-utils';
+import { Tooltip } from '@/components/ui';
 
 interface MarketOptionsProps {
   options: string[];
@@ -19,10 +20,11 @@ export function MarketOptions({ options, cas }: MarketOptionsProps) {
 
   const {
     displayOptions: calculatedDisplayOptions,
+    displayNames,
     formattedValues,
     optionColors,
     formattedChange,
-    changeColor
+    changeColor,
   } = calculateMarketOptionValues(options, cas, optionsViewMode);
 
   return (
@@ -30,6 +32,7 @@ export function MarketOptions({ options, cas }: MarketOptionsProps) {
       <div className="grid grid-cols-2 gap-1">
         {calculatedDisplayOptions.map((option, index) => {
           const tokenMint = cas?.[option]?.tokenMint;
+          const optionName = displayNames[index] || option;
 
           const handleClick = () => {
             if (tokenMint) {
@@ -38,14 +41,20 @@ export function MarketOptions({ options, cas }: MarketOptionsProps) {
           };
 
           return (
-            <button
+            <Tooltip
               key={`option-${index}`}
-              onClick={handleClick}
-              className={`px-2 py-0.5 text-xs font-mono font-medium rounded transition-colors 
-                cursor-pointer whitespace-nowrap ${optionColors[index]}`}
+              content={optionName}
+              side="top"
+              delayDuration={200}
             >
-              {formattedValues[index]}
-            </button>
+              <button
+                onClick={handleClick}
+                className={`px-2 py-0.5 text-xs font-mono font-medium rounded transition-colors 
+                  cursor-pointer whitespace-nowrap ${optionColors[index]}`}
+              >
+                {formattedValues[index]}
+              </button>
+            </Tooltip>
           );
         })}
       </div>

@@ -18,7 +18,7 @@ class PMXSupabaseApi extends BaseApi {
   }
 
   async getMarkets(): Promise<ApiResponse<PMXSupabaseMarket[]>> {
-    const path = '/markets?select=name,image_urls,limit,created_at,options&published=eq.true&order=created_at.desc';
+    const path = '/markets?select=name,slug,image_urls,limit,created_at,options&published=eq.true&order=created_at.desc';
     return this.get<PMXSupabaseMarket[]>(path, {
       headers: {
         // eslint-disable-next-line max-len

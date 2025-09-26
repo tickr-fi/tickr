@@ -5,7 +5,8 @@ import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { Market } from '@/lib/types';
 import { useTableOptionsStore } from '@/stores';
-import { Button } from '@/components/ui';
+import { Button, useToast } from '@/components/ui';
+import { copyToClipboard } from '@/lib/copy-utils';
 import { cn } from '@/lib';
 import { 
   calculateMarketOptionValues, 
@@ -24,6 +25,7 @@ interface MarketCardProps {
 
 export function MarketCard({ market }: MarketCardProps) {
     const { optionsViewMode } = useTableOptionsStore();
+    const { addToast } = useToast();
     const t = useTranslations('markets');
 
     const renderLiquidityBar = (limit: number) => {
@@ -158,15 +160,50 @@ export function MarketCard({ market }: MarketCardProps) {
         );
     };
 
+    const handleTrade = () => {
+        window.open(`https://pmx.trade/markets/${market.slug}`, '_blank');
+    };
+
+    const handleShare = async () => {
+        const url = `${window.location.origin}/markets/${market.slug}`;
+        const success = await copyToClipboard(url);
+        
+        if (success) {
+            addToast({
+                title: t('linkCopied'),
+                type: 'success',
+                duration: 2000
+            });
+        } else {
+            addToast({
+                title: t('copyError'),
+                type: 'error',
+                duration: 3000
+            });
+        }
+    };
+
     const renderActionButtons = () => (
         <div className="flex gap-2 mt-2">
             <Button variant="secondary" size="sm" className="flex-1" icon={<Star className="w-3 h-3" />}>
                 {t('card.watch')}
             </Button>
-            <Button variant="secondary" size="sm" className="flex-1" icon={<Share2 className="w-3 h-3" />}>
+            <Button 
+                variant="secondary" 
+                size="sm" 
+                className="flex-1" 
+                icon={<Share2 className="w-3 h-3" />}
+                onClick={handleShare}
+            >
                 {t('card.share')}
             </Button>
-            <Button variant="secondary" size="sm" className="flex-1" icon={<Zap className="w-3 h-3" />}>
+            <Button 
+                variant="secondary" 
+                size="sm" 
+                className="flex-1" 
+                icon={<Zap className="w-3 h-3" />}
+                onClick={handleTrade}
+            >
                 {t('card.trade')}
             </Button>
         </div>

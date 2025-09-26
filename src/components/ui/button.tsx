@@ -10,6 +10,7 @@ interface ButtonProps {
   onClick?: () => void;
   type?: 'button' | 'submit' | 'reset';
   disabled?: boolean;
+  disableHoverAnimation?: boolean;
 }
 
 export function Button({
@@ -21,6 +22,7 @@ export function Button({
   onClick,
   type = 'button',
   disabled = false,
+  disableHoverAnimation = false,
 }: ButtonProps) {
   const baseClasses = cn(
     'inline-flex items-center justify-center gap-2 font-mono font-medium',
@@ -33,7 +35,7 @@ export function Button({
     secondary: cn(
       'bg-secondary hover:bg-primary hover:text-primary-foreground',
       'hover:border-primary text-secondary-foreground border border-border',
-      'hover:scale-105 transition-all duration-200'
+      !disableHoverAnimation && 'hover:scale-105 transition-all duration-200'
     ),
     outline: 'border border-primary text-primary hover:bg-primary hover:text-primary-foreground',
   };

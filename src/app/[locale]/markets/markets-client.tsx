@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { MarketTable } from '@/components/features';
+import { MarketView } from '@/components/features';
 import { Market } from '@/lib/types';
 import { apiRequest } from '@/lib/api/client';
 
@@ -26,7 +26,7 @@ export function MarketsPageClient({ initialMarkets }: MarketsPageClientProps) {
   };
 
   return (
-    <MarketTable 
+    <MarketView 
       markets={markets} 
       isLoading={isLoading}
       onRefresh={handleRefresh}
