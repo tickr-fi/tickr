@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { Share2, Zap } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Button, useToast } from '@/components/ui';
@@ -14,11 +15,15 @@ export function MarketTableActions({ marketSlug }: MarketTableActionsProps) {
   const tMarket = useTranslations('markets');
   const { addToast } = useToast();
 
-  const handleTrade = () => {
+  const handleTrade = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     window.open(`https://pmx.trade/markets/${marketSlug}`, '_blank');
   };
 
-  const handleShare = async () => {
+  const handleShare = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     const url = `${window.location.origin}/markets/${marketSlug}`;
     const success = await copyToClipboard(url);
     

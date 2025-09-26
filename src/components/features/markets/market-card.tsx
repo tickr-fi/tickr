@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { Share2, TrendingUp, TrendingDown, Clock, Zap } from 'lucide-react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
@@ -160,11 +161,15 @@ export function MarketCard({ market }: MarketCardProps) {
         );
     };
 
-    const handleTrade = () => {
+    const handleTrade = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
         window.open(`https://pmx.trade/markets/${market.slug}`, '_blank');
     };
 
-    const handleShare = async () => {
+    const handleShare = async (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
         const url = `${window.location.origin}/markets/${market.slug}`;
         const success = await copyToClipboard(url);
 
