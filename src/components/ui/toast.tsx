@@ -18,7 +18,6 @@ interface ToastProps {
 }
 
 function ToastComponent({ toast, onRemove }: ToastProps) {
-    toast.type = 'error'
     const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
@@ -109,7 +108,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     return (
         <ToastContext.Provider value={{ addToast }}>
             {children}
-            <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-[9999] space-y-2">
+            <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-[9999] space-y-2 w-[calc(100vw-4rem)] max-w-xs">
                 {toasts.map((toast) => (
                     <ToastComponent
                         key={toast.id}
