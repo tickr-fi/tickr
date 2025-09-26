@@ -8,15 +8,15 @@ import { useTableOptionsStore } from '@/stores';
 import { Button, useToast } from '@/components/ui';
 import { copyToClipboard } from '@/lib/copy-utils';
 import { cn } from '@/lib';
-import { 
-  calculateMarketOptionValues, 
-  getChangeColor, 
-  formatChangeCompact, 
-  getFirstOptionChange24h,
-  getMarketImageUrl,
-  formatTimeRemaining,
-  getTimerColorClass,
-  getStatusColorClass
+import {
+    calculateMarketOptionValues,
+    getChangeColor,
+    formatChangeCompact,
+    getFirstOptionChange24h,
+    getMarketImageUrl,
+    formatTimeRemaining,
+    getTimerColorClass,
+    getStatusColorClass
 } from '@/lib/market-utils';
 
 interface MarketCardProps {
@@ -136,7 +136,7 @@ export function MarketCard({ market }: MarketCardProps) {
             <div className="flex justify-between gap-2 mt-4">
                 {displayOptions.map((option, index) => {
                     const tokenMint = market.cas?.[option]?.tokenMint;
-                    
+
                     return (
                         <button
                             key={option}
@@ -167,7 +167,7 @@ export function MarketCard({ market }: MarketCardProps) {
     const handleShare = async () => {
         const url = `${window.location.origin}/markets/${market.slug}`;
         const success = await copyToClipboard(url);
-        
+
         if (success) {
             addToast({
                 title: t('linkCopied'),
@@ -185,19 +185,19 @@ export function MarketCard({ market }: MarketCardProps) {
 
     const renderActionButtons = () => (
         <div className="flex gap-2 mt-2">
-            <Button 
-                variant="secondary" 
-                size="sm" 
-                className="flex-1" 
+            <Button
+                variant="secondary"
+                size="sm"
+                className="flex-1"
                 icon={<Share2 className="w-3 h-3" />}
                 onClick={handleShare}
             >
                 {t('card.share')}
             </Button>
-            <Button 
-                variant="secondary" 
-                size="sm" 
-                className="flex-1" 
+            <Button
+                variant="secondary"
+                size="sm"
+                className="flex-1"
                 icon={<Zap className="w-3 h-3" />}
                 onClick={handleTrade}
             >
@@ -207,13 +207,13 @@ export function MarketCard({ market }: MarketCardProps) {
     );
 
     return (
-        <div 
-          className={cn(
-            'bg-secondary-background border border-border rounded-lg',
-            'overflow-hidden hover:border-primary/50 transition-colors',
-            'cursor-pointer h-80 flex flex-col'
-          )}
-          onClick={handleTrade}
+        <div
+            className={cn(
+                'bg-secondary-background rounded-lg',
+                'overflow-hidden hover:border-primary/50 transition-colors',
+                'cursor-pointer h-80 flex flex-col'
+            )}
+            onClick={handleTrade}
         >
             {/* Header with background image and status indicators */}
             <div className="relative h-32 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center overflow-hidden">
