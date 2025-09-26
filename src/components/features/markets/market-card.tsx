@@ -1,6 +1,6 @@
 'use client';
 
-import { Star, Share2, TrendingUp, TrendingDown, Clock, Zap } from 'lucide-react';
+import { Share2, TrendingUp, TrendingDown, Clock, Zap } from 'lucide-react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { Market } from '@/lib/types';
@@ -185,9 +185,6 @@ export function MarketCard({ market }: MarketCardProps) {
 
     const renderActionButtons = () => (
         <div className="flex gap-2 mt-2">
-            <Button variant="secondary" size="sm" className="flex-1" icon={<Star className="w-3 h-3" />}>
-                {t('card.watch')}
-            </Button>
             <Button 
                 variant="secondary" 
                 size="sm" 
@@ -210,11 +207,14 @@ export function MarketCard({ market }: MarketCardProps) {
     );
 
     return (
-        <div className={cn(
-          'bg-secondary-background border border-border rounded-lg',
-          'overflow-hidden hover:border-primary/50 transition-colors',
-          'cursor-pointer h-80 flex flex-col'
-        )}>
+        <div 
+          className={cn(
+            'bg-secondary-background border border-border rounded-lg',
+            'overflow-hidden hover:border-primary/50 transition-colors',
+            'cursor-pointer h-80 flex flex-col'
+          )}
+          onClick={handleTrade}
+        >
             {/* Header with background image and status indicators */}
             <div className="relative h-32 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center overflow-hidden">
                 <div className="absolute inset-0">

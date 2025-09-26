@@ -27,10 +27,10 @@ export function Header() {
                 <div className="flex items-center gap-6">
                     <Link href="/" className="flex items-center gap-1 cursor-pointer">
                         <span className="text-primary font-mono text-2xl font-bold leading-8">
-                            &gt;_
+                            &gt;
                         </span>
                         <span className="text-primary font-mono text-2xl font-bold leading-8">
-                            PMX_TICKR
+                            _TICKR
                         </span>
                         <div className="w-0.5 h-6 bg-primary cursor-flicker"></div>
                     </Link>

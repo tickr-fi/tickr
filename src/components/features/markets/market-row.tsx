@@ -1,5 +1,5 @@
 import { Market } from '@/lib/types';
-import { Star, Clock } from 'lucide-react';
+import { Clock } from 'lucide-react';
 import Image from 'next/image';
 import { MarketStatusBadge } from '@/components/features/markets/market-status-badge';
 import { MarketOptions } from '@/components/features/markets/market-options';
@@ -16,17 +16,20 @@ interface MarketRowProps {
 export function MarketRow({ market }: MarketRowProps) {
   const daysRemaining = market.daysRemaining || 0;
 
+  const handleTrade = () => {
+    window.open(`https://pmx.trade/markets/${market.slug}`, '_blank');
+  };
+
   return (
-    <div className={cn(
-      'px-3 py-3 hover:bg-secondary-background transition-colors cursor-pointer',
-      'grid grid-cols-12 gap-4 items-center text-xs font-mono w-full'
-    )}>
+    <div 
+      className={cn(
+        'px-3 py-3 hover:bg-secondary-background transition-colors cursor-pointer',
+        'grid grid-cols-12 gap-4 items-center text-xs font-mono w-full'
+      )}
+      onClick={handleTrade}
+    >
       {/* Market Column */}
       <div className="col-span-5 flex items-center gap-3 pr-8">
-        <button className="hover:text-primary transition-colors">
-          <Star className="w-3 h-3 text-muted-foreground hover:text-primary" />
-        </button>
-
         <div className="flex-1 min-w-0 flex gap-3">
           {/* Market image */}
           <div className="w-8 h-8 rounded overflow-hidden flex-shrink-0">

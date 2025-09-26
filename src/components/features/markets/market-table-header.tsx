@@ -1,4 +1,3 @@
-import { Star } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useTableOptionsStore } from '@/stores';
 
@@ -18,7 +17,6 @@ const getColumns = (t: any, optionsViewMode: string): ColumnConfig[] => [
     label: t('market'),
     span: 5,
     justify: 'start',
-    icon: Star,
     padding: 'pr-8'
   },
   {
