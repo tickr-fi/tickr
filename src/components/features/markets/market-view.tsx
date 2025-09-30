@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { Market } from '@/lib/types';
 import { MarketTable } from '@/components/features/markets/market-table';
 import { MarketCardsGrid } from '@/components/features/markets/market-cards-grid';
-import { MarketGridView } from '@/components/features/market-grid';
+// import { MarketGridView } from '@/components/features/market-grid';
 import { MarketHeader } from '@/components/features/markets/market-header';
 import { MobileMarketOptions } from '@/components/features/markets/mobile-market-options';
 import { useTableOptionsStore } from '@/stores';
@@ -157,7 +157,8 @@ export function MarketView({ markets, isLoading = false, onRefresh }: MarketView
             ) : calculatedViewMode === 'cards' ? (
                 <MarketCardsGrid markets={filteredMarkets} isLoading={isLoading} />
             ) : (
-                <MarketGridView markets={filteredMarkets} isLoading={isLoading} />
+                // <MarketGridView markets={filteredMarkets} isLoading={isLoading} />
+                <div>Grid View</div>
             )}
 
             {/* Footer */}
