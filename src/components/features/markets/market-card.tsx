@@ -18,7 +18,7 @@ import {
     formatTimeRemaining,
     getTimerColorClass,
     getStatusColorClass
-} from '@/lib/market-utils';
+} from '@/lib/utils/market-utils';
 
 interface MarketCardProps {
     market: Market;
@@ -50,7 +50,7 @@ export function MarketCard({ market }: MarketCardProps) {
         );
     };
 
-    const change24h = getFirstOptionChange24h(market.options, market.cas);
+    const change24h = getFirstOptionChange24h(['YES', 'NO'], market.cas);
 
     const renderMarketImage = () => {
         const imageUrl = getMarketImageUrl(market);
@@ -131,12 +131,12 @@ export function MarketCard({ market }: MarketCardProps) {
             displayNames,
             formattedValues,
             optionColors
-        } = calculateMarketOptionValues(market.options, market.cas, optionsViewMode);
+        } = calculateMarketOptionValues(market.options, optionsViewMode);
 
         return (
             <div className="flex justify-between gap-2 mt-4">
                 {displayOptions.map((option, index) => {
-                    const tokenMint = market.cas?.[option]?.tokenMint;
+                    const tokenMint = (market.cas as any)?.[option]?.tokenMint;
 
                     return (
                         <button

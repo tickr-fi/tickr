@@ -23,6 +23,27 @@ export function normalizePrices(prices: number[]): [number, number] {
 }
 
 /**
+ * Normalizes prices to ensure consistent display formatting
+ * This function handles small decimal values by scaling them appropriately
+ */
+export function getPriceDivider(yesPrice: number, noPrice: number): number {
+
+  function leadingZeros(n: number): number {
+    const str = n.toString();
+    const match = str.match(/^0\.(0*)[1-9]/);
+    return match ? match[1].length : 0;
+  }
+
+  const zeros = Math.min(leadingZeros(yesPrice), leadingZeros(noPrice));
+  return zeros;
+}
+
+export function normalizePriceWithDivider(price: number, divider: number): number {
+  const scale = Math.pow(10, divider + 2);
+  return parseFloat((price * scale).toFixed(2));
+}
+
+/**
  * Gets the price for a specific option from the market data
  */
 export function getOptionPrice(option: string, cas?: {
@@ -82,6 +103,12 @@ export function formatChange24h(change: number | undefined): string | null {
   if (change === undefined || change === null) {
     return null;
   }
+
+  // If absolute value is less than 0.1, don't show a sign
+  if (Math.abs(change) < 0.1) {
+    return `${change.toFixed(1)}% (24h)`;
+  }
+
   const sign = change >= 0 ? '+' : '';
   return `${sign}${change.toFixed(1)}% (24h)`;
 }
@@ -93,6 +120,12 @@ export function getChangeColor(change: number | undefined): string {
   if (change === undefined || change === null) {
     return 'text-muted-foreground';
   }
+
+  // If absolute value is under 0.1, return muted foreground
+  if (Math.abs(change) < 0.1) {
+    return 'text-muted-foreground';
+  }
+
   if (change > 0) {
     return 'text-success';
   }
@@ -157,10 +190,13 @@ export function formatChangeCompact(change: number): string {
  */
 export function getMarketImageUrl(market: {
   marketImageUrl?: string;
-  optionImagesUrl?: { [key: string]: string };
+  options?: {
+    YES?: { imageUrl?: string };
+    NO?: { imageUrl?: string };
+  };
 }): string | undefined {
   const marketImage = market.marketImageUrl;
-  const firstOptionImage = market.optionImagesUrl ? Object.values(market.optionImagesUrl)[0] : undefined;
+  const firstOptionImage = market.options?.YES?.imageUrl || market.options?.NO?.imageUrl;
   return marketImage || firstOptionImage;
 }
 
@@ -171,14 +207,14 @@ export function formatDurationSinceCreation(createdAt?: string): string {
   if (!createdAt) {
     return '--';
   }
-  
+
   const now = new Date();
   const created = new Date(createdAt);
   const diffTime = now.getTime() - created.getTime();
-  
+
   const days = Math.floor(diffTime / (1000 * 60 * 60 * 24));
   const hours = Math.floor((diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  
+
   if (days > 0) {
     return `${days}d ${hours}h`;
   } else {
@@ -247,52 +283,49 @@ export function getStatusColorClass(status: string): string {
  * This is the single source of truth for market option calculations
  */
 export function calculateMarketOptionValues(
-  options: string[],
-  cas?: {
-    [key: string]: {
+  options: {
+    YES: {
       tokenMint: string;
       poolAddress: string;
       name?: string;
       currentPrice?: number;
       change24h?: number;
+      priceHistory?: any[];
+    };
+    NO: {
+      tokenMint: string;
+      poolAddress: string;
+      name?: string;
+      currentPrice?: number;
     };
   },
   optionsViewMode: 'odds' | 'prices' = 'odds'
 ) {
-  const sortedOptions = [...options].sort((a, b) => {
-    const aUpper = a.toUpperCase();
-    const bUpper = b.toUpperCase();
-    
-    if (aUpper.includes('YES') && !bUpper.includes('YES')) { return -1; }
-    if (!aUpper.includes('YES') && bUpper.includes('YES')) { return 1; }
-    
-    if (aUpper.includes('NO') && !bUpper.includes('NO')) { return -1; }
-    if (!aUpper.includes('NO') && bUpper.includes('NO')) { return 1; }
-    
-    return 0;
-  });
-  
-  const displayOptions = sortedOptions.length >= 2 ? sortedOptions.slice(0, 2) : ['Yes', 'No'];
-  
-  const displayNames = displayOptions.map(option => {
-    const casData = cas?.[option];
-    return casData?.name || option;
-  });
-  
-  const prices = displayOptions.map(option => getOptionPrice(option, cas));
-  
+
+  const displayOptions = ['YES', 'NO'];
+
+  const displayNames = [
+    options.YES.name || 'Yes',
+    options.NO.name || 'No'
+  ];
+
+  const prices = [
+    options.YES.currentPrice || 0,
+    options.NO.currentPrice || 0
+  ];
+
   const normalizedPrices = normalizePrices(prices);
-  
-  const formattedValues = normalizedPrices.map((_, index) => 
+
+  const formattedValues = normalizedPrices.map((_, index) =>
     formatMarketOptionValue(normalizedPrices, index, optionsViewMode)
   );
-  
-  const change24h = getOptionChange24h(displayOptions[0], cas);
+
+  const change24h = options.YES.change24h;
   const formattedChange = formatChange24h(change24h);
   const changeColor = getChangeColor(change24h);
-  
+
   const optionColors = displayOptions.map((_, index) => getOptionColor(index));
-  
+
   return {
     displayOptions,
     displayNames,

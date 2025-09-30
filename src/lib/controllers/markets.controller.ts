@@ -9,19 +9,18 @@ export class MarketsController {
         pmxApi.getAllMarkets(limit),
         pmxSupabaseApi.getMarkets().catch(() => ({ success: false, data: [] }))
       ]);
-      
       if (!pmxResponse.success) {
-        return { 
-          success: false, 
-          error: pmxResponse.error || 'Failed to fetch active markets' 
+        return {
+          success: false,
+          error: pmxResponse.error || 'Failed to fetch active markets'
         };
       }
 
       const pmxData = pmxResponse.data as PMXApiResponse;
       if (!pmxData.success) {
-        return { 
-          success: false, 
-          error: 'PMX API returned unsuccessful response' 
+        return {
+          success: false,
+          error: 'PMX API returned unsuccessful response'
         };
       }
 
@@ -29,14 +28,34 @@ export class MarketsController {
       const markets: Market[] = await this.processData(pmxData.data, supabaseData);
       return { success: true, data: markets };
     } catch (error) {
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Unknown error fetching markets' 
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error fetching markets'
       };
     }
   }
 
   private async processData(pmxMarkets: PMXMarket[], supabaseData?: PMXSupabaseMarket[]): Promise<Market[]> {
+    const markets: Market[] = this.mapSupabaseData(pmxMarkets, supabaseData);
+
+    await this.fetchCurrentPrices(markets);
+    await this.fetchHistoricalPrices(markets);
+
+    markets.forEach(market => {
+      const today = new Date();
+      const end = new Date(market.end_date);
+      const diffTime = end.getTime() - today.getTime();
+      market.daysRemaining = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    });
+
+    return markets.sort((a, b) => {
+      const dateA = new Date(a.end_date).getTime();
+      const dateB = new Date(b.end_date).getTime();
+      return dateA - dateB;
+    });
+  }
+
+  private mapSupabaseData(pmxMarkets: PMXMarket[], supabaseData?: PMXSupabaseMarket[]): Market[] {
     const supabaseMapByName = new Map<string, PMXSupabaseMarket>();
     if (supabaseData) {
       supabaseData.forEach((supabaseMarket) => {
@@ -44,28 +63,52 @@ export class MarketsController {
       });
     }
 
-    const markets: Market[] = pmxMarkets.map((market) => {
+    return pmxMarkets.map((market) => {
       const matchingSupabaseMarket = supabaseMapByName.get(market.title);
-      const mappedData = matchingSupabaseMarket ? this.mapSupabaseData(matchingSupabaseMarket) : {};
+      
+      if (!matchingSupabaseMarket) {
+        return {
+          ...market,
+          slug: ''
+        };
+      }
+
+      const { image_urls, limit, created_at } = matchingSupabaseMarket;
+
+      const marketImageUrl = typeof image_urls.market === 'string'
+        ? image_urls.market
+        : image_urls.market?.url;
+
+      const optionImagesUrl = {
+        YES: typeof image_urls.YES === 'string' ? image_urls.YES : image_urls.YES?.url,
+        NO: typeof image_urls.NO === 'string' ? image_urls.NO : image_urls.NO?.url
+      };
+
+      market.options.YES.imageUrl = optionImagesUrl.YES;
+      market.options.NO.imageUrl = optionImagesUrl.NO;
 
       return {
         ...market,
-        slug: matchingSupabaseMarket?.slug || '',
-        ...mappedData
+        slug: matchingSupabaseMarket.slug,
+        marketImageUrl,
+        limit,
+        createdAt: created_at
       };
     });
+  }
 
-    const tokenMint = markets.flatMap(market => 
-      Object.values(market.cas).map(ca => ca.tokenMint)
+  private async fetchCurrentPrices(markets: Market[]): Promise<void> {
+    const tokenMints = markets.flatMap(market =>
+      [market.cas.YES.tokenMint, market.cas.NO.tokenMint]
     );
 
-    const pricePromises = tokenMint.map(address => 
+    const pricePromises = tokenMints.map(address =>
       railwayApi.getPrice(address).catch(() => ({ success: false, data: null }))
     );
     const priceResults = await Promise.all(pricePromises);
 
     const priceMap = new Map<string, number>();
-    tokenMint.forEach((address, index) => {
+    tokenMints.forEach((address, index) => {
       const result = priceResults[index];
       if (result.success && result.data) {
         const price = parseFloat(result.data.price);
@@ -73,110 +116,62 @@ export class MarketsController {
       }
     });
 
-    // Fetch historical prices for YES options only
-    const yesTokenMints = this.getYesOptionTokenMints(markets);
-    const change24hMap = await this.fetchHistoricalPrices(yesTokenMints, priceMap);
+    markets.forEach(market => {
+      const yesTokenMint = market.cas.YES.tokenMint;
+      const noTokenMint = market.cas.NO.tokenMint;
+      
+      const yesCurrentPrice = priceMap.get(yesTokenMint);
+      const noCurrentPrice = priceMap.get(noTokenMint);
 
-    const enhancedMarkets = markets.map((market) => {
-      const enhancedCas: typeof market.cas = {};
-      Object.entries(market.cas).forEach(([key, ca]) => {
-        const tokenMint = ca.tokenMint;
-        const currentPrice = priceMap.get(tokenMint);
-        const change24h = change24hMap.get(tokenMint);
-        
-        enhancedCas[key] = {
-          ...ca,
-          currentPrice,
-          change24h
-        };
-      });
-
-      const matchingSupabaseMarket = supabaseMapByName.get(market.title);
-      if (matchingSupabaseMarket?.options) {
-        Object.entries(matchingSupabaseMarket.options).forEach(([optionKey, optionData]) => {
-          if (enhancedCas[optionKey]) {
-            enhancedCas[optionKey] = {
-              ...enhancedCas[optionKey],
-              name: optionData.name
-            };
-          }
-        });
+      if (yesCurrentPrice !== undefined) {
+        market.options.YES.currentPrice = yesCurrentPrice;
       }
-
-      const today = new Date();
-      const end = new Date(market.end_date);
-      const diffTime = end.getTime() - today.getTime();
-      const daysRemaining = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-      return {
-        ...market,
-        cas: enhancedCas,
-        daysRemaining
-      };
-    });
-
-    return enhancedMarkets.sort((a, b) => {
-      const dateA = new Date(a.end_date).getTime();
-      const dateB = new Date(b.end_date).getTime();
-      return dateA - dateB;
+      if (noCurrentPrice !== undefined) {
+        market.options.NO.currentPrice = noCurrentPrice;
+      }
     });
   }
 
-  private mapSupabaseData(supabaseData: PMXSupabaseMarket) {
-    const { image_urls, limit, created_at } = supabaseData;
-    
-    const marketImageUrl = typeof image_urls.market === 'string' 
-      ? image_urls.market 
-      : image_urls.market?.url;
-
-    const optionImagesUrl = Object.fromEntries(
-      Object.entries(image_urls)
-        .filter(([key]) => key !== 'market')
-        .map(([key, value]) => [
-          key, 
-          typeof value === 'string' ? value : value.url
-        ])
+  private async fetchHistoricalPrices(markets: Market[]): Promise<void> {
+    const yesTokenMints = markets.flatMap(market =>
+      [market.cas.YES.tokenMint]
     );
 
-    return {
-      marketImageUrl,
-      optionImagesUrl,
-      limit,
-      createdAt: created_at
-    };
-  }
-
-  private getYesOptionTokenMints(markets: Market[]): string[] {
-    return markets
-      .flatMap(market => Object.entries(market.cas))
-      .filter(([key]) => key === 'YES')
-      .map(([, ca]) => ca.tokenMint);
-  }
-
-  private async fetchHistoricalPrices(tokenMints: string[], priceMap: Map<string, number>): Promise<Map<string, number>> {
-    const change24hMap = new Map<string, number>();
-    
-    if (tokenMints.length === 0) {
-      return change24hMap;
+    if (yesTokenMints.length === 0) {
+      return;
     }
 
-    const historicalPromises = tokenMints.map(tokenMint =>
+    const historicalPromises = yesTokenMints.map(tokenMint =>
       railwayApi.getHistoricalPrice(tokenMint, 25).catch(() => ({ success: false, data: null }))
     );
 
     const historicalResults = await Promise.all(historicalPromises);
 
-    tokenMints.forEach((tokenMint, index) => {
-      const result = historicalResults[index];
-      const currentPrice = priceMap.get(tokenMint);
-      
-      if (result.success && result.data && currentPrice !== undefined) {
-        const change24h = this.calculate24hChange(result.data, currentPrice);
-        change24hMap.set(tokenMint, change24h);
-      }
+    const tokenToMarketMap = new Map<string, Market>();
+    markets.forEach(market => {
+      tokenToMarketMap.set(market.cas.YES.tokenMint, market);
     });
 
-    return change24hMap;
+    yesTokenMints.forEach((tokenMint, index) => {
+      const result = historicalResults[index];
+      const market = tokenToMarketMap.get(tokenMint);
+      const currentPrice = market?.options.YES?.currentPrice;
+
+      if (result.success && result.data && currentPrice !== undefined && market) {
+        const change24h = this.calculate24hChange(result.data, currentPrice);
+        market.options.YES.change24h = change24h;
+
+        if (result.data.historicalData) {
+          market.options.YES.priceHistory = result.data.historicalData.slice(0, -1);
+          market.options.YES.priceHistory.unshift({
+            timestamp: new Date().toISOString(),
+            price: currentPrice,
+            volume: result.data.historicalData[0].volume,
+            market_cap: result.data.historicalData[0].market_cap
+          });
+        }
+      }
+    });
   }
 
   private calculate24hChange(historicalData: HistoricalPriceResponse, currentPrice: number): number {
@@ -186,8 +181,7 @@ export class MarketsController {
 
     const now = new Date();
     const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-    
-    // Find the closest data point to 24 hours ago
+
     let closestPoint = historicalData.historicalData[0];
     let minTimeDiff = Math.abs(new Date(closestPoint.timestamp).getTime() - twentyFourHoursAgo.getTime());
 
@@ -205,7 +199,6 @@ export class MarketsController {
       return 0;
     }
 
-    // Calculate percentage change using the current price we already loaded
     return ((currentPrice - price24hAgo) / price24hAgo) * 100;
   }
 }

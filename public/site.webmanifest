@@ -1,0 +1,25 @@
+{
+  "name": "Tickr - live prediction markets on Solana",
+  "short_name": "Tickr",
+  "description": "Tickr is the prediction market platform to see real-time odds, liquidity, and outcome tokens in one place",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#ff4500",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["finance", "business", "productivity"],
+  "lang": "en",
+  "dir": "ltr"
+}

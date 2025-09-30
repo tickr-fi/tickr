@@ -7,7 +7,7 @@ import { MarketEndDate } from '@/components/features/markets/market-end-date';
 import { MarketLiquidity } from '@/components/features/markets/market-liquidity';
 import { MarketTableActions } from '@/components/features/markets/market-table-actions';
 import { cn } from '@/lib';
-import { getMarketImageUrl, formatDurationSinceCreation } from '@/lib/market-utils';
+import { getMarketImageUrl, formatDurationSinceCreation } from '@/lib/utils/market-utils';
 
 interface MarketRowProps {
   market: Market;
@@ -69,7 +69,7 @@ export function MarketRow({ market }: MarketRowProps) {
 
       {/* Options Column */}
       <div className="col-span-2 flex justify-center">
-        <MarketOptions options={market.options} cas={market.cas} />
+        <MarketOptions options={market.options} />
       </div>
 
       {/* End Date Column */}

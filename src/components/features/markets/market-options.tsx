@@ -1,21 +1,29 @@
 import { useTableOptionsStore } from '@/stores';
-import { calculateMarketOptionValues } from '@/lib/market-utils';
+import { calculateMarketOptionValues } from '@/lib/utils/market-utils';
 import { Tooltip } from '@/components/ui';
 
 interface MarketOptionsProps {
-  options: string[];
-  cas?: {
-    [key: string]: {
+  options: {
+    YES: {
       tokenMint: string;
       poolAddress: string;
       name?: string;
       currentPrice?: number;
       change24h?: number;
+      priceHistory?: any[];
+    };
+    NO: {
+      tokenMint: string;
+      poolAddress: string;
+      name?: string;
+      currentPrice?: number;
+      change24h?: number;
+      priceHistory?: any[];
     };
   };
 }
 
-export function MarketOptions({ options, cas }: MarketOptionsProps) {
+export function MarketOptions({ options }: MarketOptionsProps) {
   const { optionsViewMode } = useTableOptionsStore();
 
   const {
@@ -25,13 +33,13 @@ export function MarketOptions({ options, cas }: MarketOptionsProps) {
     optionColors,
     formattedChange,
     changeColor,
-  } = calculateMarketOptionValues(options, cas, optionsViewMode);
+  } = calculateMarketOptionValues(options, optionsViewMode);
 
   return (
     <div className="flex flex-col gap-1 w-full max-w-40">
       <div className="grid grid-cols-2 gap-1">
         {calculatedDisplayOptions.map((option, index) => {
-          const tokenMint = cas?.[option]?.tokenMint;
+          const tokenMint = option === 'YES' ? options.YES?.tokenMint : options.NO?.tokenMint;
           const optionName = displayNames[index] || option;
 
           const handleClick = () => {

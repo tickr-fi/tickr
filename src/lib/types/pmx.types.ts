@@ -3,14 +3,34 @@ export interface PMXMarket {
   end_date: string;
   description: string;
   resolved: boolean;
-  options: string[];
-  cas: {
-    [key: string]: {
+  options: {
+    YES: {
       tokenMint: string;
       poolAddress: string;
       name?: string;
       currentPrice?: number;
       change24h?: number;
+      priceHistory?: HistoricalDataPoint[];
+      imageUrl?: string;
+    };
+    NO: {
+      tokenMint: string;
+      poolAddress: string;
+      name?: string;
+      currentPrice?: number;
+      change24h?: number;
+      priceHistory?: HistoricalDataPoint[];
+      imageUrl?: string;
+    };
+  };
+  cas: {
+    YES: {
+      tokenMint: string;
+      poolAddress: string;
+    };
+    NO: {
+      tokenMint: string;
+      poolAddress: string;
     };
   };
 }
@@ -77,9 +97,6 @@ export interface PMXSupabaseMarket {
 export interface Market extends PMXMarket {
   slug: string; // URL-friendly version of title
   marketImageUrl?: string;
-  optionImagesUrl?: {
-    [key: string]: string;
-  };
   limit?: number;
   createdAt?: string;
   daysRemaining?: number;

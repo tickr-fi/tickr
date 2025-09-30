@@ -5,6 +5,10 @@ import createNextIntlPlugin from 'next-intl/plugin';
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 const nextConfig: NextConfig = {
+  compress: true,
+  poweredByHeader: false,
+  generateEtags: false,
+  trailingSlash: false,
   images: {
     remotePatterns: [
       {
@@ -14,6 +18,8 @@ const nextConfig: NextConfig = {
         pathname: '/storage/v1/object/public/**',
       },
     ],
+    formats: ['image/webp', 'image/avif'],
+    minimumCacheTTL: 60,
   },
 };
 

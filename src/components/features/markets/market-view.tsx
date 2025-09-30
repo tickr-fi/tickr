@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { Market } from '@/lib/types';
 import { MarketTable } from '@/components/features/markets/market-table';
 import { MarketCardsGrid } from '@/components/features/markets/market-cards-grid';
+import { MarketGridView } from '@/components/features/market-grid';
 import { MarketHeader } from '@/components/features/markets/market-header';
 import { MobileMarketOptions } from '@/components/features/markets/mobile-market-options';
 import { useTableOptionsStore } from '@/stores';
@@ -100,7 +101,7 @@ export function MarketView({ markets, isLoading = false, onRefresh }: MarketView
         let moversMatch = true;
         if (showMovers10Percent) {
             // Check if any option has 24h change >= 10%
-            const hasSignificantChange = Object.values(market.cas).some(option => {
+            const hasSignificantChange = Object.values(market.options).some(option => {
                 return option.change24h !== undefined && Math.abs(option.change24h) >= 10;
             });
             moversMatch = hasSignificantChange;
@@ -153,8 +154,10 @@ export function MarketView({ markets, isLoading = false, onRefresh }: MarketView
 
             {calculatedViewMode === 'table' ? (
                 <MarketTable markets={filteredMarkets} isLoading={isLoading} />
-            ) : (
+            ) : calculatedViewMode === 'cards' ? (
                 <MarketCardsGrid markets={filteredMarkets} isLoading={isLoading} />
+            ) : (
+                <MarketGridView markets={filteredMarkets} isLoading={isLoading} />
             )}
 
             {/* Footer */}
