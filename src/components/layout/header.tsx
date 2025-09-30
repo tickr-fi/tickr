@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTableOptionsStore } from '@/stores';
+import Image from 'next/image';
 
 const navigationItems = [
     { key: 'markets', href: '/markets', icon: BarChart2, comingSoon: false },
@@ -26,6 +27,17 @@ export function Header() {
                 {/* Brand Name and Navigation */}
                 <div className="flex items-center gap-6">
                     <Link href="/" className="flex items-center gap-1 cursor-pointer">
+                        <Image
+                            src="/icons/favicon-32x32.png"
+                            alt="Tickr Logo"
+                            width={24}
+                            height={24}
+                            className="w-6 h-6"
+                            style={{
+                                marginTop: '4px',
+                                marginRight: '-6px'
+                            }}
+                        />
                         <span className="text-primary font-mono text-2xl font-bold leading-8">
                             &gt;
                         </span>
