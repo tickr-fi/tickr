@@ -2,8 +2,8 @@ import { useTranslations } from 'next-intl';
 
 interface MarketEndDateProps {
   endDate: string;
-  daysRemaining: number;
   createdAt?: string;
+  daysRemaining?: number;
 }
 
 export function MarketEndDate({ endDate, createdAt }: MarketEndDateProps) {

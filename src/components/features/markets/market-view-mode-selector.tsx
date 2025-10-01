@@ -10,6 +10,7 @@ export function MarketViewModeSelector() {
   const viewModes = [
     { key: 'table' as const, label: t('table') },
     { key: 'cards' as const, label: t('cards') },
+    { key: 'grid' as const, label: t('grid') },
   ];
 
   return (

@@ -84,6 +84,7 @@ export interface PMXSupabaseMarket {
   };
   limit: number;
   created_at: string;
+  end_date: string;
   options: {
     [key: string]: {
       name: string;

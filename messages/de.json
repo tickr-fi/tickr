@@ -51,6 +51,7 @@
     "viewMode": {
       "table": "TABELLE",
       "cards": "KARTEN",
+      "grid": "GRID",
       "autoCards": "Automatisch zu Karten für Mobile gewechselt",
       "title": "ANSICHTSMODUS"
     },
@@ -97,6 +98,12 @@
       "share": "TEILEN",
       "trade": "HANDELN",
       "expired": "ABGELAUFEN"
+    },
+    "gridCard": {
+      "timeRemaining": "VERBLEIBENDE ZEIT",
+      "liquidity": "LIQUIDITÄT",
+      "share": "TEILEN",
+      "trade": "HANDELN"
     }
   }
 }

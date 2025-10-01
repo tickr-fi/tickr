@@ -51,6 +51,7 @@
     "viewMode": {
       "table": "TABLE",
       "cards": "CARDS",
+      "grid": "GRID",
       "title": "VIEW MODE"
     },
     "status": {
@@ -96,6 +97,12 @@
       "share": "SHARE",
       "trade": "TRADE",
       "expired": "EXPIRED"
+    },
+    "gridCard": {
+      "timeRemaining": "TIME REMAINING",
+      "liquidity": "LIQUIDITY",
+      "share": "SHARE",
+      "trade": "TRADE"
     }
   }
 }

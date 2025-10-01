@@ -3,7 +3,7 @@ import { create } from 'zustand';
 export type SortOption = 'expiringSoon' | 'expiringLater' | 'alphabetical' | 'highestLiquidity';
 export type StatusFilter = 'ACTIVE' | 'RESOLVED' | 'ALL';
 export type OptionsViewMode = 'odds' | 'prices';
-export type ViewMode = 'table' | 'cards';
+export type ViewMode = 'table' | 'cards' | 'grid';
 export type TimeFrameFilter = 'all' | '24h' | '7d' | '30d';
 export type LiquidityFilter = 'any' | '10k' | '50k' | '100k';
 
