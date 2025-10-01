@@ -149,7 +149,7 @@ export class MarketsController {
     }
 
     const historicalPromises = yesTokenMints.map(tokenMint =>
-      railwayApi.getHistoricalPrice(tokenMint, 25).catch(() => ({ success: false, data: null }))
+      railwayApi.getHistoricalPrice(tokenMint, 500).catch(() => ({ success: false, data: null }))
     );
 
     const historicalResults = await Promise.all(historicalPromises);
