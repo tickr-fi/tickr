@@ -43,9 +43,13 @@ export class MarketsController {
 
     markets.forEach(market => {
       const today = new Date();
+
       const endDate = new Date(market.end_date);
-      endDate.setUTCHours(23, 59, 59, 999);
-      market.end_date = endDate.toISOString();
+
+      if (!market.resolved) {
+        endDate.setUTCHours(23, 59, 59, 999);
+        market.end_date = endDate.toISOString();
+      }
 
       const diffTime = endDate.getTime() - today.getTime();
       market.daysRemaining = Math.ceil(diffTime / (1000 * 60 * 60 * 24));

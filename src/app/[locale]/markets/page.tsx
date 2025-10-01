@@ -6,6 +6,8 @@ interface Props {
   params: Promise<{ locale: string }>;
 }
 
+export const dynamic = 'force-dynamic';
+
 export default async function MarketsPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
@@ -18,11 +20,4 @@ export default async function MarketsPage({ params }: Props) {
       <MarketsPageClient initialMarkets={markets} />
     </main>
   );
-}
-
-export function generateStaticParams() {
-  return [
-    { locale: 'en' },
-    { locale: 'de' }
-  ];
 }
