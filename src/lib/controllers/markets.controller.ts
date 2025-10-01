@@ -1,4 +1,4 @@
-import { pmxApi, railwayApi, pmxSupabaseApi } from '@/lib/api';
+import { pmxApi, railwayApi, pmxSupabaseApi, backendProductionRailwayApi } from '@/lib/api';
 import { PMXApiResponse, PMXMarket, Market, ApiResponse, PMXSupabaseMarket, HistoricalPriceResponse } from '@/lib/types';
 
 export class MarketsController {
@@ -40,6 +40,7 @@ export class MarketsController {
 
     await this.fetchCurrentPrices(markets);
     await this.fetchHistoricalPrices(markets);
+    await this.fetchMarketFees(markets);
 
     markets.forEach(market => {
       const today = new Date();
@@ -177,6 +178,37 @@ export class MarketsController {
             market_cap: result.data.historicalData[0].market_cap
           });
         }
+      }
+    });
+  }
+
+  private async fetchMarketFees(markets: Market[]): Promise<void> {
+    const marketsWithSlugs = markets.filter(market => market.slug);
+    
+    if (marketsWithSlugs.length === 0) {
+      return;
+    }
+
+    const feesPromises = marketsWithSlugs.map(market =>
+      backendProductionRailwayApi.getMarketFees(market.slug).catch(() => ({ success: false, data: null }))
+    );
+
+    const feesResults = await Promise.all(feesPromises);
+
+    marketsWithSlugs.forEach((market, index) => {
+      const result = feesResults[index];
+      
+      if (result.success && result.data) {
+        const feesData = result.data;
+        
+        market.totalFees = feesData.totalFees.total;
+        
+        feesData.positionFees.forEach(positionFee => {
+          const option = positionFee.option.toUpperCase();
+          if (market.options[option as keyof typeof market.options]) {
+            market.options[option as keyof typeof market.options].fees = positionFee.totalFees;
+          }
+        });
       }
     });
   }

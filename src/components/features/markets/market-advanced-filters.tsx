@@ -1,18 +1,20 @@
 'use client';
 
 import { X, RotateCcw, Clock, DollarSign, Eye, TrendingUp } from 'lucide-react';
-import { useTableOptionsStore, TimeFrameFilter, LiquidityFilter } from '@/stores';
+import { useTableOptionsStore, TimeFrameFilter, LiquidityFilter, VolumeFilter } from '@/stores';
 import { useTranslations } from 'next-intl';
 import { Dropdown, DropdownOption } from '@/components/ui/dropdown';
 
 export function MarketAdvancedFilters() {
   const t = useTranslations('markets.advancedFilters');
-  
+
   const {
     timeFrameFilter,
     setTimeFrameFilter,
     liquidityFilter,
     setLiquidityFilter,
+    volumeFilter,
+    setVolumeFilter,
     hideIlliquidMarkets,
     setHideIlliquidMarkets,
     showMovers10Percent,
@@ -34,9 +36,17 @@ export function MarketAdvancedFilters() {
     { key: '100k', label: t('liquidity.100k') },
   ];
 
+  const volumeOptions: DropdownOption[] = [
+    { key: 'any', label: t('volume.any') },
+    { key: '2_5k', label: t('volume.2_5k') },
+    { key: '5k', label: t('volume.5k') },
+    { key: '10k', label: t('volume.10k') },
+  ];
+
   const handleReset = () => {
     setTimeFrameFilter('all');
     setLiquidityFilter('any');
+    setVolumeFilter('any');
     setHideIlliquidMarkets(false);
     setShowMovers10Percent(false);
   };
@@ -57,7 +67,7 @@ export function MarketAdvancedFilters() {
             text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
           >
             <RotateCcw className="w-3 h-3" />
-{t('reset')}
+            {t('reset')}
           </button>
           <button
             onClick={handleClose}
@@ -74,7 +84,7 @@ export function MarketAdvancedFilters() {
         <div className="flex-1">
           <label className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground mb-1">
             <Clock className="w-3 h-3" />
-{t('expiryTimeframe')}
+            {t('expiryTimeframe')}
           </label>
           <Dropdown
             options={timeFrameOptions}
@@ -88,12 +98,26 @@ export function MarketAdvancedFilters() {
         <div className="flex-1">
           <label className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground mb-1">
             <DollarSign className="w-3 h-3" />
-{t('minLiquidity')}
+            {t('minLiquidity')}
           </label>
           <Dropdown
             options={liquidityOptions}
             selectedOption={liquidityFilter}
             onOptionChange={(key) => setLiquidityFilter(key as LiquidityFilter)}
+            className="w-full"
+          />
+        </div>
+
+        {/* Volume Filter */}
+        <div className="flex-1">
+          <label className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground mb-1">
+            <TrendingUp className="w-3 h-3" />
+            {t('minVolume')}
+          </label>
+          <Dropdown
+            options={volumeOptions}
+            selectedOption={volumeFilter}
+            onOptionChange={(key) => setVolumeFilter(key as VolumeFilter)}
             className="w-full"
           />
         </div>
@@ -114,7 +138,7 @@ export function MarketAdvancedFilters() {
             />
             <label htmlFor="hideIlliquid" className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground">
               <Eye className="w-3 h-3" />
-{t('hideIlliquidMarkets')}
+              {t('hideIlliquidMarkets')}
             </label>
           </div>
 
@@ -132,7 +156,7 @@ export function MarketAdvancedFilters() {
             />
             <label htmlFor="showMovers" className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground">
               <TrendingUp className="w-3 h-3" />
-{t('showMovers10Percent')}
+              {t('showMovers10Percent')}
             </label>
           </div>
         </div>

@@ -5,6 +5,7 @@ import { MarketStatusBadge } from '@/components/features/markets/market-status-b
 import { MarketOptions } from '@/components/features/markets/market-options';
 import { MarketEndDate } from '@/components/features/markets/market-end-date';
 import { MarketLiquidity } from '@/components/features/markets/market-liquidity';
+import { MarketVolume } from '@/components/features/markets/market-volume';
 import { MarketTableActions } from '@/components/features/markets/market-table-actions';
 import { cn } from '@/lib';
 import { getMarketImageUrl, formatDurationSinceCreation } from '@/lib/utils/market-utils';
@@ -73,7 +74,7 @@ export function MarketRow({ market }: MarketRowProps) {
       </div>
 
       {/* End Date Column */}
-      <div className="col-span-2 flex justify-center">
+      <div className="col-span-1 flex justify-center">
         <MarketEndDate
           endDate={market.end_date}
           daysRemaining={daysRemaining}
@@ -84,6 +85,11 @@ export function MarketRow({ market }: MarketRowProps) {
       {/* Liquidity Column */}
       <div className="col-span-1 flex justify-center">
         <MarketLiquidity limit={market.limit} />
+      </div>
+
+      {/* Volume Column */}
+      <div className="col-span-1 flex justify-center">
+        <MarketVolume market={market} />
       </div>
 
       {/* Status Column */}

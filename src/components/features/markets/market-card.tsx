@@ -9,6 +9,8 @@ import { useTableOptionsStore } from '@/stores';
 import { Button, useToast } from '@/components/ui';
 import { copyToClipboard } from '@/lib/copy-utils';
 import { cn } from '@/lib';
+import { formatVolume } from '@/lib/utils/market-utils';
+
 import {
     calculateMarketOptionValues,
     getChangeColor,
@@ -46,6 +48,19 @@ export function MarketCard({ market }: MarketCardProps) {
                         style={{ width: `${percentage}%` }}
                     />
                 </div>
+            </div>
+        );
+    };
+
+    const renderVolumeInfo = () => {
+        const volume = market.totalFees ? market.totalFees * 25 : 0;
+
+        return (
+            <div className="flex items-center justify-between mt-2">
+                <span className="text-[10px] font-mono text-muted-foreground">{t('headers.volume')}</span>
+                <span className="text-xs font-mono text-blue-500">
+                    {formatVolume(volume)}
+                </span>
             </div>
         );
     };
@@ -242,6 +257,7 @@ export function MarketCard({ market }: MarketCardProps) {
                         {renderMarketOptions()}
                         <div className="mt-4">
                             {renderLiquidityBar(market.limit || 0)}
+                            {renderVolumeInfo()}
                         </div>
                     </div>
                     <div className="mt-4">

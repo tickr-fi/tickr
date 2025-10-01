@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Market } from '@/lib/types';
-import { getMarketImageUrl, formatTimeRemaining } from '@/lib/utils/market-utils';
+import { getMarketImageUrl, formatTimeRemaining, formatVolume } from '@/lib/utils/market-utils';
 import { Clock, X } from 'lucide-react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
@@ -95,6 +95,16 @@ export function MarketGridCard({ market, onClose }: MarketGridCardProps) {
                     <span className="text-muted-foreground text-sm">{t('liquidity')}:</span>
                     <span className="text-foreground text-sm font-medium">
                         ${market.limit?.toLocaleString() || '0'}
+                    </span>
+                </div>
+            </div>
+
+            {/* Volume */}
+            <div className="p-4 border-b border-border">
+                <div className="flex items-center gap-2">
+                    <span className="text-muted-foreground text-sm">{t('volume')}:</span>
+                    <span className="text-blue-500 text-sm font-medium">
+                        {formatVolume(market.totalFees ? market.totalFees * 25 : 0)}
                     </span>
                 </div>
             </div>

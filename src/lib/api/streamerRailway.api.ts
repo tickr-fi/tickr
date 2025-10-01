@@ -1,19 +1,19 @@
 import { BaseApi } from './base.api';
 import { ApiResponse, RequestConfig, PriceResponse, HistoricalPriceResponse } from '@/lib/types';
 
-class RailwayApi extends BaseApi {
+class StreamerRailwayApi extends BaseApi {
   private static readonly BASE_URL = 'https://streamer-production-3d21.up.railway.app/api';
-  private static instance: RailwayApi;
+  private static instance: StreamerRailwayApi;
 
   private constructor(config: RequestConfig = {}) {
-    super(RailwayApi.BASE_URL, config);
+    super(StreamerRailwayApi.BASE_URL, config);
   }
 
-  public static getInstance(config: RequestConfig = {}): RailwayApi {
-    if (!RailwayApi.instance) {
-      RailwayApi.instance = new RailwayApi(config);
+  public static getInstance(config: RequestConfig = {}): StreamerRailwayApi {
+    if (!StreamerRailwayApi.instance) {
+      StreamerRailwayApi.instance = new StreamerRailwayApi(config);
     }
-    return RailwayApi.instance;
+    return StreamerRailwayApi.instance;
   }
 
   async getPrice(tokenAddress: string): Promise<ApiResponse<PriceResponse>> {
@@ -27,4 +27,4 @@ class RailwayApi extends BaseApi {
   }
 }
 
-export const railwayApi = RailwayApi.getInstance();
+export const streamerRailwayApi = StreamerRailwayApi.getInstance();

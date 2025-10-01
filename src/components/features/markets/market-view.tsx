@@ -26,6 +26,7 @@ export function MarketView({ markets, isLoading = false, onRefresh }: MarketView
         searchQuery,
         timeFrameFilter,
         liquidityFilter,
+        volumeFilter,
         hideIlliquidMarkets,
         showMovers10Percent,
         showAdvancedFilters,
@@ -91,6 +92,19 @@ export function MarketView({ markets, isLoading = false, onRefresh }: MarketView
             liquidityMatch = market.limit >= minLiquidity;
         }
 
+        // Volume filter
+        let volumeMatch = true;
+        if (volumeFilter !== 'any') {
+            const volume = (market.totalFees || 0) * 25;
+            const minVolume = {
+                '2_5k': 2500,
+                '5k': 5000,
+                '10k': 10000,
+            }[volumeFilter] || 0;
+
+            volumeMatch = volume >= minVolume;
+        }
+
         // Hide illiquid markets filter
         let illiquidMatch = true;
         if (hideIlliquidMarkets) {
@@ -107,7 +121,7 @@ export function MarketView({ markets, isLoading = false, onRefresh }: MarketView
             moversMatch = hasSignificantChange;
         }
 
-        return statusMatch && searchMatch && timeFrameMatch && liquidityMatch && illiquidMatch && moversMatch;
+        return statusMatch && searchMatch && timeFrameMatch && liquidityMatch && volumeMatch && illiquidMatch && moversMatch;
     }).sort((a, b) => {
         // First apply filter-based sorting
         if (statusFilter === 'ALL') {
@@ -125,6 +139,10 @@ export function MarketView({ markets, isLoading = false, onRefresh }: MarketView
                 return a.title.localeCompare(b.title);
             case 'highestLiquidity':
                 return (b.limit || 0) - (a.limit || 0);
+            case 'highestVolume':
+                const volumeA = a.totalFees ? a.totalFees * 25 : 0;
+                const volumeB = b.totalFees ? b.totalFees * 25 : 0;
+                return volumeB - volumeA;
             default:
                 return 0;
         }

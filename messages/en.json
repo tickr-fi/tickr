@@ -32,6 +32,7 @@
       "expiringLater": "Expiring Later",
       "alphabetical": "Alphabetical",
       "highestLiquidity": "Liquidity",
+      "highestVolume": "Volume",
       "title": "SORT BY"
     },
     "headers": {
@@ -40,6 +41,7 @@
       "prices": "PRICES",
       "expires": "EXPIRES",
       "liquidity": "LIQUIDITY",
+      "volume": "VOLUME",
       "status": "STATUS",
       "actions": "ACTIONS"
     },
@@ -76,6 +78,7 @@
       "reset": "RESET",
       "expiryTimeframe": "EXPIRY TIMEFRAME",
       "minLiquidity": "MIN LIQUIDITY",
+      "minVolume": "MIN VOLUME",
       "hideIlliquidMarkets": "HIDE ILLIQUID MARKETS",
       "showMovers10Percent": "MOVERS ≥10% (24H)",
       "timeframes": {
@@ -89,6 +92,12 @@
         "10k": "$10,000+",
         "50k": "$50,000+",
         "100k": "$100,000+"
+      },
+      "volume": {
+        "any": "Any Volume",
+        "2_5k": "$2,500+",
+        "5k": "$5,000+",
+        "10k": "$10,000+"
       }
     },
     "card": {
@@ -101,6 +110,7 @@
     "gridCard": {
       "timeRemaining": "TIME REMAINING",
       "liquidity": "LIQUIDITY",
+      "volume": "VOLUME",
       "share": "SHARE",
       "trade": "TRADE"
     }

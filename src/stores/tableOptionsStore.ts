@@ -1,11 +1,12 @@
 import { create } from 'zustand';
 
-export type SortOption = 'expiringSoon' | 'expiringLater' | 'alphabetical' | 'highestLiquidity';
+export type SortOption = 'expiringSoon' | 'expiringLater' | 'alphabetical' | 'highestLiquidity' | 'highestVolume';
 export type StatusFilter = 'ACTIVE' | 'RESOLVED' | 'ALL';
 export type OptionsViewMode = 'odds' | 'prices';
 export type ViewMode = 'table' | 'cards' | 'grid';
 export type TimeFrameFilter = 'all' | '24h' | '7d' | '30d';
 export type LiquidityFilter = 'any' | '10k' | '50k' | '100k';
+export type VolumeFilter = 'any' | '2_5k' | '5k' | '10k';
 
 interface TableOptionsState {
   selectedSort: SortOption;
@@ -28,6 +29,9 @@ interface TableOptionsState {
   
   liquidityFilter: LiquidityFilter;
   setLiquidityFilter: (filter: LiquidityFilter) => void;
+  
+  volumeFilter: VolumeFilter;
+  setVolumeFilter: (filter: VolumeFilter) => void;
   
   hideIlliquidMarkets: boolean;
   setHideIlliquidMarkets: (hide: boolean) => void;
@@ -54,6 +58,7 @@ export const useTableOptionsStore = create<TableOptionsState>()((set) => ({
   searchQuery: '',
   timeFrameFilter: 'all',
   liquidityFilter: 'any',
+  volumeFilter: 'any',
   hideIlliquidMarkets: false,
   showMovers10Percent: false,
   showAdvancedFilters: false,
@@ -68,6 +73,7 @@ export const useTableOptionsStore = create<TableOptionsState>()((set) => ({
   setSearchQuery: (query) => set({ searchQuery: query }),
   setTimeFrameFilter: (filter) => set({ timeFrameFilter: filter }),
   setLiquidityFilter: (filter) => set({ liquidityFilter: filter }),
+  setVolumeFilter: (filter) => set({ volumeFilter: filter }),
   setHideIlliquidMarkets: (hide) => set({ hideIlliquidMarkets: hide }),
   setShowMovers10Percent: (show) => set({ showMovers10Percent: show }),
   setShowAdvancedFilters: (show) => set({ showAdvancedFilters: show }),

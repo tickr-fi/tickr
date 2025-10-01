@@ -11,6 +11,7 @@ export { MarketOptions } from './market-options';
 export { MarketPrice } from './market-price';
 export { MarketEndDate } from './market-end-date';
 export { MarketLiquidity } from './market-liquidity';
+export { MarketVolume } from './market-volume';
 export { MarketAdvancedFilters } from './market-advanced-filters';
 export { MarketFilterButton } from './market-filter-button';
 export { MarketViewModeSelector } from './market-view-mode-selector';

@@ -26,18 +26,24 @@ export function calculateTimeRemaining(endDate: string): number {
 }
 
 /**
- * Calculate market size based on liquidity (max 100,000)
+ * Calculate market size based on volume with logarithmic scaling
+ * Volume can range from 0 to unlimited, so we use log scaling for better distribution
  */
 export function calculateMarketSize(market: Market): number {
-    // Use the liquidity
-    const liquidity = market.limit || 0;
+    const volume = (market.totalFees || 0) * 25;
 
-    // Normalize to 20-80px range based on 100,000 max liquidity
-    const maxLiquidity = 100000;
-    const percentage = Math.min(100, (liquidity / maxLiquidity) * 100);
-    const normalizedSize = Math.min(Math.max((percentage / 100) * 60 + 20, 20), 80);
+    const minSize = 30;
+    const maxSize = 120;
+    const sizePer1K = 2;
 
-    return normalizedSize;
+    if (volume === 0) {
+        return minSize;
+    }
+
+    const additionalSize = Math.floor(volume / 1000) * sizePer1K;
+    const size = Math.min(minSize + additionalSize, maxSize);
+
+    return Math.round(size);
 }
 
 /**

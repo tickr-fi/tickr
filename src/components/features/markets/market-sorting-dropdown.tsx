@@ -1,7 +1,7 @@
 import { useTranslations } from 'next-intl';
 import { Dropdown, DropdownOption } from '@/components/ui';
 
-export type SortOption = 'expiringSoon' | 'expiringLater' | 'alphabetical' | 'highestLiquidity';
+export type SortOption = 'expiringSoon' | 'expiringLater' | 'alphabetical' | 'highestLiquidity' | 'highestVolume';
 
 interface MarketSortingDropdownProps {
   selectedSort: SortOption;
@@ -16,6 +16,7 @@ export function MarketSortingDropdown({ selectedSort, onSortChange }: MarketSort
     { key: 'expiringLater', label: t('expiringLater') },
     { key: 'alphabetical', label: t('alphabetical') },
     { key: 'highestLiquidity', label: t('highestLiquidity') },
+    { key: 'highestVolume', label: t('highestVolume') },
   ];
 
   return (

@@ -28,12 +28,18 @@ const getColumns = (t: any, optionsViewMode: string): ColumnConfig[] => [
   {
     key: 'expires',
     label: t('expires'),
-    span: 2,
+    span: 1,
     justify: 'center'
   },
   {
     key: 'liquidity',
     label: t('liquidity'),
+    span: 1,
+    justify: 'center'
+  },
+  {
+    key: 'volume',
+    label: t('volume'),
     span: 1,
     justify: 'center'
   },

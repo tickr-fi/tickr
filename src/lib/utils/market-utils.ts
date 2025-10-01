@@ -279,6 +279,23 @@ export function getStatusColorClass(status: string): string {
 }
 
 /**
+ * Formats volume for display with appropriate suffixes (K, M)
+*/
+export function formatVolume(volume: number): string {
+  if (volume === 0) {
+    return 'N/A';
+  }
+
+  if (volume >= 1000000) {
+    return `$${(volume / 1000000).toFixed(1)}M`;
+  } else if (volume >= 1000) {
+    return `$${(volume / 1000).toFixed(1)}K`;
+  } else {
+    return `$${volume.toFixed(0)}`;
+  }
+}
+
+/**
  * Main function to calculate and format market option values
  * This is the single source of truth for market option calculations
  */

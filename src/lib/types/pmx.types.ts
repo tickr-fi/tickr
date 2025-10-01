@@ -12,6 +12,7 @@ export interface PMXMarket {
       change24h?: number;
       priceHistory?: HistoricalDataPoint[];
       imageUrl?: string;
+      fees?: number;
     };
     NO: {
       tokenMint: string;
@@ -21,6 +22,7 @@ export interface PMXMarket {
       change24h?: number;
       priceHistory?: HistoricalDataPoint[];
       imageUrl?: string;
+      fees?: number;
     };
   };
   cas: {
@@ -101,4 +103,5 @@ export interface Market extends PMXMarket {
   limit?: number;
   createdAt?: string;
   daysRemaining?: number;
+  totalFees?: number;
 }
