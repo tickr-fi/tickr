@@ -12,7 +12,7 @@ export default async function MarketsPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const result = await marketsController.getAllMarkets(20);
+  const result = await marketsController.getAllMarkets(50);
   const markets = result.success ? result.data || [] : [];
 
   return (
