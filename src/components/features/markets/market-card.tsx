@@ -31,36 +31,69 @@ export function MarketCard({ market }: MarketCardProps) {
     const { addToast } = useToast();
     const t = useTranslations('markets');
 
-    const renderLiquidityBar = (limit: number) => {
+    const renderLiquidityAndVolume = () => {
+        // Liquidity calculation
+        const limit = market.limit || 0;
         const maxLiquidity = 100000; // 100K
-        const percentage = Math.min(100, (limit / maxLiquidity) * 100);
-        const displayValue = limit || 0;
+        const liquidityPercentage = Math.min(100, (limit / maxLiquidity) * 100);
+
+        // Volume calculation
+        const totalVolume = market.totalFees ? market.totalFees * 25 : 0;
+        const yesVolume = (market.options.YES?.fees || 0) * 25;
+        const noVolume = (market.options.NO?.fees || 0) * 25;
+        const totalOptionVolume = yesVolume + noVolume;
+        const yesPercentage = totalOptionVolume > 0 ? (yesVolume / totalOptionVolume) * 100 : 50;
+        const noPercentage = totalOptionVolume > 0 ? (noVolume / totalOptionVolume) * 100 : 50;
 
         return (
-            <div className="space-y-1">
-                <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-mono text-muted-foreground">{t('card.liquidity')}</span>
-                    <span className="text-xs font-mono text-orange-500">${displayValue.toLocaleString()}</span>
+            <div className="flex gap-4 mt-4">
+                {/* Liquidity - Left Half */}
+                <div className="flex-1">
+                    <div className="space-y-1">
+                        <div className="flex items-center justify-between">
+                            <span className="text-[10px] font-mono text-muted-foreground">{t('card.liquidity')}</span>
+                            <span className="text-xs font-mono text-orange-500">${limit.toLocaleString()}</span>
+                        </div>
+                        <div className="w-full h-1 bg-muted rounded-full overflow-hidden">
+                            <div
+                                className="h-full bg-orange-500 transition-all duration-300"
+                                style={{ width: `${liquidityPercentage}%` }}
+                            />
+                        </div>
+                    </div>
                 </div>
-                <div className="w-full h-1 bg-muted rounded-full overflow-hidden">
-                    <div
-                        className="h-full bg-orange-500 transition-all duration-300"
-                        style={{ width: `${percentage}%` }}
-                    />
+
+                {/* Volume - Right Half */}
+                <div className="flex-1">
+                    <div className="space-y-1">
+                        <div className="flex items-center justify-between">
+                            <span className="text-[10px] font-mono text-muted-foreground">{t('headers.volume')}</span>
+                            <span className="text-xs font-mono text-blue-500">
+                                {formatVolume(totalVolume)}
+                            </span>
+                        </div>
+                        <div className="w-full h-1 bg-muted rounded-full overflow-hidden">
+                            <div className="h-full flex">
+                                <div
+                                    className="h-full bg-green-500 transition-all duration-300"
+                                    style={{ width: `${yesPercentage}%` }}
+                                />
+                                <div
+                                    className="h-full bg-red-500 transition-all duration-300"
+                                    style={{ width: `${noPercentage}%` }}
+                                />
+                            </div>
+                        </div>
+                        <div className="flex justify-between w-full text-[10px] font-mono">
+                            <span className="text-green-500">
+                                YES: {formatVolume(yesVolume)}
+                            </span>
+                            <span className="text-red-500">
+                                NO: {formatVolume(noVolume)}
+                            </span>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        );
-    };
-
-    const renderVolumeInfo = () => {
-        const volume = market.totalFees ? market.totalFees * 25 : 0;
-
-        return (
-            <div className="flex items-center justify-between mt-2">
-                <span className="text-[10px] font-mono text-muted-foreground">{t('headers.volume')}</span>
-                <span className="text-xs font-mono text-blue-500">
-                    {formatVolume(volume)}
-                </span>
             </div>
         );
     };
@@ -255,10 +288,7 @@ export function MarketCard({ market }: MarketCardProps) {
                 <div className="flex flex-col justify-between flex-1">
                     <div>
                         {renderMarketOptions()}
-                        <div className="mt-4">
-                            {renderLiquidityBar(market.limit || 0)}
-                            {renderVolumeInfo()}
-                        </div>
+                        {renderLiquidityAndVolume()}
                     </div>
                     <div className="mt-4">
                         {renderActionButtons()}

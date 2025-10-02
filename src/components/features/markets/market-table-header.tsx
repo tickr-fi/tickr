@@ -15,7 +15,7 @@ const getColumns = (t: any, optionsViewMode: string): ColumnConfig[] => [
   {
     key: 'market',
     label: t('market'),
-    span: 5,
+    span: 6,
     justify: 'start',
     padding: 'pr-8'
   },
@@ -40,7 +40,7 @@ const getColumns = (t: any, optionsViewMode: string): ColumnConfig[] => [
   {
     key: 'volume',
     label: t('volume'),
-    span: 1,
+    span: 2,
     justify: 'center'
   },
   {
@@ -64,7 +64,7 @@ export function MarketTableHeader() {
 
   return (
     <div className="bg-muted px-3 py-2 border-b border-border">
-      <div className="grid grid-cols-12 gap-4 items-center text-xs font-mono font-medium text-muted-foreground">
+      <div className="grid grid-cols-14 gap-4 items-center text-xs font-mono font-medium text-muted-foreground">
         {columns.map((column) => {
           const Icon = column.icon;
           const justifyClass = {

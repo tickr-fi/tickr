@@ -25,12 +25,12 @@ export function MarketRow({ market }: MarketRowProps) {
     <div 
       className={cn(
         'px-3 py-3 hover:bg-secondary-background transition-colors cursor-pointer',
-        'grid grid-cols-12 gap-4 items-center text-xs font-mono w-full'
+        'grid grid-cols-14 gap-4 items-center text-xs font-mono w-full'
       )}
       onClick={handleTrade}
     >
       {/* Market Column */}
-      <div className="col-span-5 flex items-center gap-3 pr-8">
+      <div className="col-span-6 flex items-center gap-3 pr-8">
         <div className="flex-1 min-w-0 flex gap-3">
           {/* Market image */}
           <div className="w-8 h-8 rounded overflow-hidden flex-shrink-0">
@@ -88,7 +88,7 @@ export function MarketRow({ market }: MarketRowProps) {
       </div>
 
       {/* Volume Column */}
-      <div className="col-span-1 flex justify-center">
+      <div className="col-span-2 flex justify-center">
         <MarketVolume market={market} />
       </div>
 
