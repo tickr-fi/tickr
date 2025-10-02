@@ -57,8 +57,8 @@ export function calculateOptionSize(market: Market, optionType: 'YES' | 'NO'): n
     const optionFees = market.options[optionType]?.fees || 0;
     const volume = optionFees * 25; // Same multiplier as market volume
 
-    const minSize = 20; // Smaller minimum for individual options
-    const maxSize = 100; // Smaller maximum for individual options
+    const minSize = 30; // Smaller minimum for individual options
+    const maxSize = 120; // Smaller maximum for individual options
     const sizePer1K = 2;
 
     if (volume === 0) {
