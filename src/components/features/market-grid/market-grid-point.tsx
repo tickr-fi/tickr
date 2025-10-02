@@ -114,6 +114,7 @@ export function MarketGridPoint({
                 visible={isHovered || isPinned}
                 isPinned={isPinned}
                 onClose={() => setIsPinned(false)}
+                highlightedOptionType={optionType}
             />
         </>
     );

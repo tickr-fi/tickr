@@ -12,9 +12,12 @@ interface MarketGridHoverTooltipProps {
   visible: boolean;
   isPinned?: boolean;
   onClose?: () => void;
+  highlightedOptionType?: 'YES' | 'NO';
 }
 
-export function MarketGridHoverTooltip({ market, x, y, size, visible, isPinned = false, onClose }: MarketGridHoverTooltipProps) {
+export function MarketGridHoverTooltip({
+  market, x, y, size, visible, isPinned = false, onClose, highlightedOptionType
+}: MarketGridHoverTooltipProps) {
   const tooltipRef = useRef<HTMLDivElement>(null);
 
   // Handle click outside to close pinned tooltip
@@ -40,7 +43,7 @@ export function MarketGridHoverTooltip({ market, x, y, size, visible, isPinned =
   }
 
   // Calculate tooltip position to avoid going off-screen
-  const tooltipWidth = 320; 
+  const tooltipWidth = 320;
   const tooltipHeight = 500;
   const padding = 20;
   const marginFromPoint = 30;
@@ -72,7 +75,7 @@ export function MarketGridHoverTooltip({ market, x, y, size, visible, isPinned =
         top: `${tooltipY}px`,
       }}
     >
-      <MarketGridCard market={market} onClose={onClose} />
+      <MarketGridCard market={market} onClose={onClose} highlightedOptionType={highlightedOptionType} />
     </div>
   );
 }

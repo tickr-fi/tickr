@@ -12,9 +12,10 @@ import { MarketGridCardButtons } from './market-grid-card-buttons';
 interface MarketGridCardProps {
     market: Market;
     onClose?: () => void;
+    highlightedOptionType?: 'YES' | 'NO';
 }
 
-export function MarketGridCard({ market, onClose }: MarketGridCardProps) {
+export function MarketGridCard({ market, onClose, highlightedOptionType }: MarketGridCardProps) {
     const t = useTranslations('markets.gridCard');
     const imageUrl = getMarketImageUrl(market);
 
@@ -87,7 +88,7 @@ export function MarketGridCard({ market, onClose }: MarketGridCardProps) {
             </div>
 
             {/* Market Options */}
-            <MarketGridCardOptions market={market} />
+            <MarketGridCardOptions market={market} highlightedOptionType={highlightedOptionType} />
 
             {/* Liquidity */}
             <div className="p-4 border-b border-border">
