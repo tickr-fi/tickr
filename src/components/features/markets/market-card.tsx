@@ -209,15 +209,25 @@ export function MarketCard({ market }: MarketCardProps) {
         );
     };
 
-    const handleTrade = (e: React.MouseEvent) => {
+    const handleTrade = (e: React.MouseEvent | React.TouchEvent) => {
         e.preventDefault();
         e.stopPropagation();
+        // Additional Safari iOS fix
+        if (e.nativeEvent) {
+            e.nativeEvent.preventDefault();
+            e.nativeEvent.stopPropagation();
+        }
         window.open(`https://pmx.trade/markets/${market.slug}`, '_blank');
     };
 
-    const handleShare = async (e: React.MouseEvent) => {
+    const handleShare = async (e: React.MouseEvent | React.TouchEvent) => {
         e.preventDefault();
         e.stopPropagation();
+        // Additional Safari iOS fix
+        if (e.nativeEvent) {
+            e.nativeEvent.preventDefault();
+            e.nativeEvent.stopPropagation();
+        }
         const url = `${window.location.origin}/markets/${market.slug}`;
         const success = await copyToClipboard(url);
 
