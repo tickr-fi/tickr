@@ -67,7 +67,7 @@ export function MarketGridPoint({
     return (
         <>
             <div
-                className={`absolute cursor-pointer transition-all duration-200 ${(isHovered || isPairedHovered) ? 'scale-125' : 'hover:scale-125'}`}
+                className={`absolute cursor-pointer transition-all duration-200 ${(isHovered || isPairedHovered) ? 'scale-120' : 'hover:scale-120'}`}
                 style={{
                     left: `${x - size / 2}px`,
                     top: `${y - size / 2}px`,
