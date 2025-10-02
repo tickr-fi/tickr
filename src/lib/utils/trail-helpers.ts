@@ -1,6 +1,6 @@
 import { HistoricalDataPoint, Market } from '@/lib/types';
-import { timeToCanvasX, probabilityToCanvasY } from './grid-utils';
-import { getPriceDivider, normalizePriceWithDivider, normalizePrices } from './market-utils';
+import { timeToCanvasX, probabilityToCanvasY, timeToCanvasY, probabilityToCanvasX } from './grid-utils';
+import { getPriceDivider, normalizePriceWithDivider } from './market-utils';
 import { type GridOptionsFilter } from '@/stores';
 
 /**
@@ -171,13 +171,13 @@ export function formatTimePeriod(period: TimePeriod): string {
  * Get trail color based on option type, 24h change, hover state, and options filter
  */
 export function getTrailColor(
-  optionType: 'YES' | 'NO', 
-  change24h: number | undefined, 
-  isHovered: boolean, 
+  optionType: 'YES' | 'NO',
+  change24h: number | undefined,
+  isHovered: boolean,
   optionsFilter: GridOptionsFilter = 'BOTH'
 ): string {
   const opacity = isHovered ? 'ff' : '40';
-  
+
   // If filter is BOTH, use option-based colors
   if (optionsFilter === 'BOTH') {
     const baseColors = {
@@ -186,7 +186,7 @@ export function getTrailColor(
     };
     return `${baseColors[optionType]}${opacity}`;
   }
-  
+
   // If filter is not BOTH, use 24h change-based colors
   if (change24h !== undefined && change24h !== null) {
     if (change24h > 0) {
@@ -195,7 +195,7 @@ export function getTrailColor(
       return `#ff4500${opacity}`; // Red for negative change
     }
   }
-  
+
   return `#9ca3af${opacity}`; // Gray for no change data
 }
 
@@ -251,7 +251,8 @@ export function drawMarketTrail(
   timePeriod: TimePeriod,
   maxHours: number,
   minHours: number,
-  optionsFilter: GridOptionsFilter = 'BOTH'
+  optionsFilter: GridOptionsFilter = 'BOTH',
+  isLargeScreen: boolean = true
 ): void {
   const priceHistory = market.options[optionType]?.priceHistory || [];
   const divider = getPriceDivider(
@@ -282,8 +283,16 @@ export function drawMarketTrail(
 
     const probability = normalizePriceWithDivider(point.averagePrice, divider);
 
-    const x = timeToCanvasX(timeRemaining, canvasWidth, padding, maxHours, minHours);
-    const y = probabilityToCanvasY(probability, canvasHeight, padding);
+    let x, y;
+    if (isLargeScreen) {
+      // Desktop: time on X-axis, probability on Y-axis
+      x = timeToCanvasX(timeRemaining, canvasWidth, padding, maxHours, minHours);
+      y = probabilityToCanvasY(probability, canvasHeight, padding);
+    } else {
+      // Mobile: time on Y-axis, probability on X-axis
+      x = probabilityToCanvasX(probability, canvasWidth, padding);
+      y = timeToCanvasY(timeRemaining, canvasHeight, padding, maxHours, minHours);
+    }
 
     if (firstPoint) {
       ctx.moveTo(x, y);
@@ -303,8 +312,16 @@ export function drawMarketTrail(
 
     const probability = normalizePriceWithDivider(point.averagePrice, divider);
 
-    const x = timeToCanvasX(timeRemaining, canvasWidth, padding, maxHours || 2160, minHours || 0.1);
-    const y = probabilityToCanvasY(probability, canvasHeight, padding);
+    let x, y;
+    if (isLargeScreen) {
+      // Desktop: time on X-axis, probability on Y-axis
+      x = timeToCanvasX(timeRemaining, canvasWidth, padding, maxHours || 2160, minHours || 0.1);
+      y = probabilityToCanvasY(probability, canvasHeight, padding);
+    } else {
+      // Mobile: time on Y-axis, probability on X-axis
+      x = probabilityToCanvasX(probability, canvasWidth, padding);
+      y = timeToCanvasY(timeRemaining, canvasHeight, padding, maxHours || 2160, minHours || 0.1);
+    }
 
     const pointSize = 2;
 
@@ -327,26 +344,35 @@ export function drawAllTrails(
   timePeriod: TimePeriod,
   maxHours: number,
   minHours: number,
-  optionsFilter: GridOptionsFilter = 'BOTH'
+  optionsFilter: GridOptionsFilter = 'BOTH',
+  isLargeScreen: boolean = true
 ): void {
   markets.forEach((market) => {
     const isMarketHovered = hoveredMarketSlug === market.slug;
-    
+
     // Draw trails based on options filter
     if (optionsFilter === 'BOTH') {
-      drawMarketTrail(ctx, market, 'YES', isMarketHovered, canvasWidth, canvasHeight, padding, timePeriod, maxHours, minHours, optionsFilter);
-      drawMarketTrail(ctx, market, 'NO', isMarketHovered, canvasWidth, canvasHeight, padding, timePeriod, maxHours, minHours, optionsFilter);
+      drawMarketTrail(
+        ctx, market, 'YES', isMarketHovered, canvasWidth, canvasHeight, padding, timePeriod, maxHours, minHours, optionsFilter, isLargeScreen
+      );
+      drawMarketTrail(
+        ctx, market, 'NO', isMarketHovered, canvasWidth, canvasHeight, padding, timePeriod, maxHours, minHours, optionsFilter, isLargeScreen
+      );
     } else if (optionsFilter === 'YES') {
-      drawMarketTrail(ctx, market, 'YES', isMarketHovered, canvasWidth, canvasHeight, padding, timePeriod, maxHours, minHours, optionsFilter);
+      drawMarketTrail(
+        ctx, market, 'YES', isMarketHovered, canvasWidth, canvasHeight, padding, timePeriod, maxHours, minHours, optionsFilter, isLargeScreen
+      );
     } else if (optionsFilter === 'NO') {
-      drawMarketTrail(ctx, market, 'NO', isMarketHovered, canvasWidth, canvasHeight, padding, timePeriod, maxHours, minHours, optionsFilter);
+      drawMarketTrail(
+        ctx, market, 'NO', isMarketHovered, canvasWidth, canvasHeight, padding, timePeriod, maxHours, minHours, optionsFilter, isLargeScreen
+      );
     } else if (optionsFilter === 'WINNER') {
       const yesPrice = market.options.YES?.currentPrice as number;
       const noPrice = market.options.NO?.currentPrice as number;
-      const yesProbability = normalizePrices([yesPrice, noPrice])[0];
-      const noProbability = normalizePrices([yesPrice, noPrice])[1];
-      const winner = yesProbability > noProbability ? 'YES' : 'NO';
-      drawMarketTrail(ctx, market, winner, isMarketHovered, canvasWidth, canvasHeight, padding, timePeriod, maxHours, minHours, optionsFilter);
+      const winner = yesPrice > noPrice ? 'YES' : 'NO';
+      drawMarketTrail(
+        ctx, market, winner, isMarketHovered, canvasWidth, canvasHeight, padding, timePeriod, maxHours, minHours, optionsFilter, isLargeScreen
+      );
     }
   });
 }

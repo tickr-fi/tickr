@@ -23,8 +23,8 @@ export function MarketGridOptionsFilter({ selectedFilter, onFilterChange }: Mark
           key={option.value}
           onClick={() => onFilterChange(option.value)}
           className={`
-            px-2 py-1.5 text-xs font-medium transition-all duration-200 cursor-pointer
-            relative
+            px-3 py-1.5 lg:px-2 lg:py-1.5 text-xs font-medium transition-all duration-200 cursor-pointer
+            relative min-w-[87.5px] lg:min-w-0
             ${
               selectedFilter === option.value
                 ? 'bg-primary text-primary-foreground'

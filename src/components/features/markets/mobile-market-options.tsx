@@ -5,6 +5,7 @@ import { useMarketOptionsStore } from '@/stores';
 import { type SortOption } from './market-sorting-dropdown';
 import { Button } from '@/components/ui';
 import { Filter } from 'lucide-react';
+import { useResponsiveViewMode } from '@/hooks/useResponsiveViewMode';
 
 interface MobileMarketOptionsProps {
   selectedSort: SortOption;
@@ -12,19 +13,34 @@ interface MobileMarketOptionsProps {
   showAdvancedFilters?: boolean;
 }
 
-export function MobileMarketOptions({ 
-  selectedSort, 
-  onSortChange, 
+export function MobileMarketOptions({
+  selectedSort,
+  onSortChange,
 }: MobileMarketOptionsProps) {
   const t = useTranslations('markets');
-  const { 
-    statusFilter, 
-    setStatusFilter, 
-    optionsViewMode, 
+  const { isLargeScreen } = useResponsiveViewMode();
+  const {
+    statusFilter,
+    setStatusFilter,
+    optionsViewMode,
     setOptionsViewMode,
+    viewMode,
+    setViewMode,
     setShowAdvancedFilters,
     setShowMobileMenu
   } = useMarketOptionsStore();
+
+  const displayViewMode = isLargeScreen ? viewMode : (viewMode === 'table' ? 'cards' : viewMode);
+
+  // Handle view mode change and close mobile menu
+  const handleViewModeChange = (newViewMode: 'cards' | 'grid') => {
+    // On mobile, map 'cards' back to 'table' if that was the original value
+    const actualViewMode = !isLargeScreen && viewMode === 'table' && newViewMode === 'cards' 
+      ? 'table' 
+      : newViewMode;
+    setViewMode(actualViewMode);
+    setShowMobileMenu(false);
+  };
 
   // Filter options data
   const statusFilters = [
@@ -36,6 +52,11 @@ export function MobileMarketOptions({
   const optionsViewModes = [
     { key: 'odds' as const, label: t('optionsViewMode.odds') },
     { key: 'prices' as const, label: t('optionsViewMode.prices') },
+  ];
+
+  const viewModes = [
+    { key: 'cards' as const, label: t('viewMode.cards') },
+    { key: 'grid' as const, label: t('viewMode.grid') },
   ];
 
   const sortOptions = [
@@ -66,20 +87,20 @@ export function MobileMarketOptions({
     columns: number = 3
   ) => {
     const gridCols = columns === 2 ? 'grid-cols-2' : 'grid-cols-3';
-    
+
     return (
-       <div>
-         <h3 className="text-xs font-mono font-medium text-muted-foreground mb-2">
-           {title}
-         </h3>
+      <div>
+        <h3 className="text-xs font-mono font-medium text-muted-foreground mb-2">
+          {title}
+        </h3>
         <div className={`grid gap-1 ${gridCols}`}>
           {options.map((option) => (
             <button
               key={option.key}
               onClick={() => onSelect(option.key)}
-              className={`px-2 py-1 text-xs font-mono font-medium transition-colors rounded cursor-pointer ${
-                selectedValue === option.key ? BUTTON_CLASSES.active : BUTTON_CLASSES.inactive
-              }`}
+              className={`px-2 py-1 text-xs font-mono font-medium transition-colors
+                rounded cursor-pointer ${selectedValue === option.key ? BUTTON_CLASSES.active : BUTTON_CLASSES.inactive
+                }`}
             >
               {option.label}
             </button>
@@ -98,13 +119,13 @@ export function MobileMarketOptions({
         </h2>
       </div>
 
-      {/* Status Filter */}
+      {/* View Mode */}
       {renderButtonGroup(
-        t('filters.title') || 'STATUS FILTER',
-        statusFilters,
-        statusFilter,
-        setStatusFilter,
-        3
+        t('viewMode.title') || 'VIEW MODE',
+        viewModes,
+        displayViewMode as 'cards' | 'grid',
+        handleViewModeChange,
+        2
       )}
 
       {/* Options View Mode */}
@@ -114,6 +135,15 @@ export function MobileMarketOptions({
         optionsViewMode,
         setOptionsViewMode,
         2
+      )}
+
+      {/* Status Filter */}
+      {renderButtonGroup(
+        t('filters.title') || 'STATUS FILTER',
+        statusFilters,
+        statusFilter,
+        setStatusFilter,
+        3
       )}
 
       {/* Sorting */}
@@ -127,8 +157,8 @@ export function MobileMarketOptions({
               key={option.key}
               onClick={() => onSortChange(option.key)}
               className={`w-full px-3 py-2 text-xs font-mono font-medium transition-all duration-200 rounded-md cursor-pointer text-left ${
-                selectedSort === option.key 
-                  ? 'bg-secondary text-secondary-foreground shadow-sm' 
+                selectedSort === option.key
+                  ? 'bg-secondary text-secondary-foreground shadow-sm'
                   : 'bg-transparent text-muted-foreground hover:bg-muted/50 hover:text-foreground'
               }`}
             >

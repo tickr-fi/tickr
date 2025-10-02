@@ -3,15 +3,15 @@
 import { useRef, useEffect, useCallback, forwardRef, useImperativeHandle } from 'react';
 import { Market } from '@/lib/types';
 import { drawAllTrails } from '@/lib/utils/trail-helpers';
-import { timeToCanvasX } from '@/lib/utils/grid-utils';
+import { timeToCanvasX, timeToCanvasY } from '@/lib/utils/grid-utils';
 import { TimePeriod } from '@/lib/utils/trail-helpers';
 import { useMarketOptionsStore } from '@/stores';
-import { 
-  getTimeLevelsForFilter, 
-  getTimeLabelsForFilter, 
-  getMaxTimeRangeForFilter, 
-  getMinTimeRangeForFilter, 
-  getAggregationPeriodForFilter 
+import {
+  getTimeLevelsForFilter,
+  getTimeLabelsForFilter,
+  getMaxTimeRangeForFilter,
+  getMinTimeRangeForFilter,
+  getAggregationPeriodForFilter
 } from '@/lib/utils/time-filter-utils';
 
 interface MarketGridCanvasProps {
@@ -29,7 +29,7 @@ export interface MarketGridCanvasRef {
 export const MarketGridCanvas = forwardRef<MarketGridCanvasRef, MarketGridCanvasProps>(
   function MarketGridCanvas({ width, height, markets, hoveredMarketSlug }, ref) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    
+
     const { gridTimeFilter: timeFilter, gridOptionsFilter: optionsFilter } = useMarketOptionsStore();
 
     useImperativeHandle(ref, () => ({
@@ -37,13 +37,40 @@ export const MarketGridCanvas = forwardRef<MarketGridCanvasRef, MarketGridCanvas
       getContext: () => canvasRef.current?.getContext('2d') || null,
     }));
 
-    // Draw grid function
-    const drawGrid = useCallback((ctx: CanvasRenderingContext2D) => {
-      const padding = 60;
-      const canvasHeight = height - (padding * 2);
+    // Draw grid lines for mobile (swapped axes)
+    const drawMobileGridLines = useCallback((ctx: CanvasRenderingContext2D, padding: number) => {
+      // Set grid style
+      ctx.strokeStyle = '#374151'; // Gray grid lines
+      ctx.lineWidth = 1;
+      ctx.setLineDash([2, 4]);
 
-      // Clear canvas
-      ctx.clearRect(0, 0, width, height);
+      // Draw vertical grid lines (probability levels)
+      const probLevels = [25, 50, 75, 100];
+      probLevels.forEach(prob => {
+        const x = padding + (prob / 100) * (width - padding * 2);
+        ctx.beginPath();
+        ctx.moveTo(x, padding);
+        ctx.lineTo(x, height - padding);
+        ctx.stroke();
+      });
+
+      // Draw horizontal grid lines (time levels) - dynamic based on filter
+      const timeLevels = getTimeLevelsForFilter(timeFilter);
+      const maxHours = getMaxTimeRangeForFilter(timeFilter);
+      const minHours = getMinTimeRangeForFilter();
+
+      timeLevels.forEach(hours => {
+        const y = timeToCanvasY(hours, height, padding, maxHours, minHours);
+        ctx.beginPath();
+        ctx.moveTo(padding, y);
+        ctx.lineTo(width - padding, y);
+        ctx.stroke();
+      });
+    }, [width, height, timeFilter]);
+
+    // Draw grid lines for desktop (original axes)
+    const drawDesktopGridLines = useCallback((ctx: CanvasRenderingContext2D, padding: number) => {
+      const canvasHeight = height - (padding * 2);
 
       // Set grid style
       ctx.strokeStyle = '#374151'; // Gray grid lines
@@ -64,7 +91,7 @@ export const MarketGridCanvas = forwardRef<MarketGridCanvasRef, MarketGridCanvas
       const timeLevels = getTimeLevelsForFilter(timeFilter);
       const maxHours = getMaxTimeRangeForFilter(timeFilter);
       const minHours = getMinTimeRangeForFilter();
-      
+
       timeLevels.forEach(hours => {
         const x = timeToCanvasX(hours, width, padding, maxHours, minHours);
         ctx.beginPath();
@@ -72,26 +99,69 @@ export const MarketGridCanvas = forwardRef<MarketGridCanvasRef, MarketGridCanvas
         ctx.lineTo(x, height - padding);
         ctx.stroke();
       });
+    }, [width, height, timeFilter]);
 
-      // Draw X-axis line (solid line at bottom)
+    // Draw axis lines for mobile
+    const drawMobileAxisLines = useCallback((ctx: CanvasRenderingContext2D, padding: number) => {
       ctx.setLineDash([]);
       ctx.strokeStyle = '#4b5563'; // Darker gray
       ctx.lineWidth = 1;
+
+      // Mobile: Y-axis line (solid line at left)
+      ctx.beginPath();
+      ctx.moveTo(padding, padding);
+      ctx.lineTo(padding, height - padding);
+      ctx.stroke();
+    }, [height]);
+
+    // Draw axis lines for desktop
+    const drawDesktopAxisLines = useCallback((ctx: CanvasRenderingContext2D, padding: number) => {
+      ctx.setLineDash([]);
+      ctx.strokeStyle = '#4b5563'; // Darker gray
+      ctx.lineWidth = 1;
+
+      // Desktop: X-axis line (solid line at bottom)
       ctx.beginPath();
       ctx.moveTo(padding, height - padding);
       ctx.lineTo(width - padding, height - padding);
       ctx.stroke();
+    }, [width, height]);
+
+    // Draw axis labels for mobile
+    const drawMobileAxisLabels = useCallback((ctx: CanvasRenderingContext2D, padding: number) => {
+      ctx.fillStyle = '#9ca3af'; // Gray text
+      ctx.font = '10px monospace'; // Smaller font on mobile
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+
+      // X-axis tick labels (probability levels)
+      const probLevels = [25, 50, 75, 100];
+      probLevels.forEach(prob => {
+        const x = padding + (prob / 100) * (width - padding * 2);
+        ctx.textAlign = 'center';
+        ctx.fillText(`${prob}%`, x, height - padding + 10);
+      });
+
+      // Y-axis tick labels (time levels) - dynamic based on filter
+      const timeLabels = getTimeLabelsForFilter(timeFilter);
+      const maxHours = getMaxTimeRangeForFilter(timeFilter);
+      const minHours = getMinTimeRangeForFilter();
+
+      timeLabels.forEach(({ hours, label }) => {
+        const y = timeToCanvasY(hours, height, padding, maxHours, minHours);
+        ctx.textAlign = 'right';
+        ctx.fillText(label, padding - 5, y);
+      });
     }, [width, height, timeFilter]);
 
-    // Draw axes labels
-    const drawAxesLabels = useCallback((ctx: CanvasRenderingContext2D) => {
-      const padding = 60;
-
+    // Draw axis labels for desktop
+    const drawDesktopAxisLabels = useCallback((ctx: CanvasRenderingContext2D, padding: number) => {
       ctx.fillStyle = '#9ca3af'; // Gray text
       ctx.font = '12px monospace';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
 
+      // Desktop: Original axes - time on X-axis, probability on Y-axis
       // Y-axis label (Implied Probability)
       ctx.save();
       ctx.translate(15, height / 2);
@@ -101,7 +171,7 @@ export const MarketGridCanvas = forwardRef<MarketGridCanvasRef, MarketGridCanvas
 
       // X-axis label (Time Remaining)
       ctx.textAlign = 'center';
-      ctx.fillText('TIME REMAINING', width / 2, height - 5);
+      ctx.fillText('TIME REMAINING', width / 2, height - 10);
 
       // Y-axis tick labels
       const probLevels = [25, 50, 75, 100];
@@ -113,16 +183,27 @@ export const MarketGridCanvas = forwardRef<MarketGridCanvasRef, MarketGridCanvas
 
       // X-axis tick labels - dynamic based on filter
       const timeLabels = getTimeLabelsForFilter(timeFilter);
-
       const maxHours = getMaxTimeRangeForFilter(timeFilter);
       const minHours = getMinTimeRangeForFilter();
-      
+
       timeLabels.forEach(({ hours, label }) => {
         const x = timeToCanvasX(hours, width, padding, maxHours, minHours);
         ctx.textAlign = 'center';
         ctx.fillText(label, x, height - padding + 20);
       });
     }, [width, height, timeFilter]);
+
+    // Draw trails
+    const drawTrails = useCallback((ctx: CanvasRenderingContext2D, padding: number) => {
+      // Get aggregation period and scaling parameters based on time filter
+      const aggregationPeriod = getAggregationPeriodForFilter(timeFilter) as TimePeriod;
+      const maxHours = getMaxTimeRangeForFilter(timeFilter);
+      const minHours = getMinTimeRangeForFilter();
+
+      // Draw all trails with dynamic aggregation and scaling
+      const isLargeScreen = width >= 1024;
+      drawAllTrails(ctx, markets, hoveredMarketSlug, width, height, padding, aggregationPeriod, maxHours, minHours, optionsFilter, isLargeScreen);
+    }, [width, height, markets, hoveredMarketSlug, timeFilter, optionsFilter]);
 
     // Main draw function
     const draw = useCallback(() => {
@@ -150,21 +231,38 @@ export const MarketGridCanvas = forwardRef<MarketGridCanvasRef, MarketGridCanvas
       canvas.style.width = `${width}px`;
       canvas.style.height = `${height}px`;
 
-    // Draw grid
-    drawGrid(ctx);
+      // Clear canvas
+      ctx.clearRect(0, 0, width, height);
 
-    // Draw axes labels
-    drawAxesLabels(ctx);
+      const isMobile = width < 1024;
+      // Calculate padding
+      const padding = isMobile ? 20 : 60; // Match grid padding calculation
 
-    // Get aggregation period and scaling parameters based on time filter
-    const aggregationPeriod = getAggregationPeriodForFilter(timeFilter) as TimePeriod;
-    const maxHours = getMaxTimeRangeForFilter(timeFilter);
-    const minHours = getMinTimeRangeForFilter();
+      if (isMobile) {
+        // Mobile drawing methods
+        drawMobileGridLines(ctx, padding);
+        drawMobileAxisLines(ctx, padding);
+        drawMobileAxisLabels(ctx, padding);
+      } else {
+        // Desktop drawing methods
+        drawDesktopGridLines(ctx, padding);
+        drawDesktopAxisLines(ctx, padding);
+        drawDesktopAxisLabels(ctx, padding);
+      }
 
-    // Draw all trails with dynamic aggregation and scaling
-    const padding = 60;
-    drawAllTrails(ctx, markets, hoveredMarketSlug, width, height, padding, aggregationPeriod, maxHours, minHours, optionsFilter);
-    }, [drawGrid, drawAxesLabels, width, height, markets, hoveredMarketSlug, timeFilter, optionsFilter]);
+      // Draw trails (shared method with responsive parameters)
+      drawTrails(ctx, padding);
+    }, [
+      drawMobileGridLines,
+      drawDesktopGridLines,
+      drawMobileAxisLines,
+      drawDesktopAxisLines,
+      drawMobileAxisLabels,
+      drawDesktopAxisLabels,
+      drawTrails,
+      width,
+      height
+    ]);
 
     // Redraw when dimensions change
     useEffect(() => {

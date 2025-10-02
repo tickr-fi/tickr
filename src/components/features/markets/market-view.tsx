@@ -148,7 +148,7 @@ export function MarketView({ markets, isLoading = false, onRefresh }: MarketView
         }
     });
 
-    const calculatedViewMode = isLargeScreen ? viewMode : 'cards';
+    const calculatedViewMode = isLargeScreen ? viewMode : (viewMode === 'table' ? 'cards' : viewMode);
     return (
         <div className="w-full bg-background relative">
             <MarketHeader
