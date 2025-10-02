@@ -8,7 +8,11 @@ export type TimeFrameFilter = 'all' | '24h' | '7d' | '30d';
 export type LiquidityFilter = 'any' | '10k' | '50k' | '100k';
 export type VolumeFilter = 'any' | '2_5k' | '5k' | '10k';
 
-interface TableOptionsState {
+// Grid filter types
+export type GridTimeFilter = '<1h' | '<24h' | '<7d' | '<30d' | 'All';
+export type GridOptionsFilter = 'BOTH' | 'YES' | 'NO' | 'WINNER';
+
+interface MarketOptionsState {
   selectedSort: SortOption;
   setSelectedSort: (sort: SortOption) => void;
   
@@ -47,9 +51,16 @@ interface TableOptionsState {
   
   showMobileMenu: boolean;
   setShowMobileMenu: (show: boolean) => void;
+  
+  // Grid filter states
+  gridTimeFilter: GridTimeFilter;
+  setGridTimeFilter: (filter: GridTimeFilter) => void;
+  
+  gridOptionsFilter: GridOptionsFilter;
+  setGridOptionsFilter: (filter: GridOptionsFilter) => void;
 }
 
-export const useTableOptionsStore = create<TableOptionsState>()((set) => ({
+export const useMarketOptionsStore = create<MarketOptionsState>()((set) => ({
   // Default values
   selectedSort: 'expiringSoon',
   statusFilter: 'ACTIVE',
@@ -65,6 +76,10 @@ export const useTableOptionsStore = create<TableOptionsState>()((set) => ({
   lastUpdate: null,
   showMobileMenu: false,
   
+  // Grid filter defaults
+  gridTimeFilter: 'All',
+  gridOptionsFilter: 'BOTH',
+  
   // Actions
   setSelectedSort: (sort) => set({ selectedSort: sort }),
   setStatusFilter: (filter) => set({ statusFilter: filter }),
@@ -79,4 +94,8 @@ export const useTableOptionsStore = create<TableOptionsState>()((set) => ({
   setShowAdvancedFilters: (show) => set({ showAdvancedFilters: show }),
   setLastUpdate: (date) => set({ lastUpdate: date }),
   setShowMobileMenu: (show) => set({ showMobileMenu: show }),
+  
+  // Grid filter actions
+  setGridTimeFilter: (filter) => set({ gridTimeFilter: filter }),
+  setGridOptionsFilter: (filter) => set({ gridOptionsFilter: filter }),
 }));

@@ -1,11 +1,14 @@
 import { Market } from '@/lib/types';
 import { normalizePrices } from './market-utils';
 
+import { type GridOptionsFilter } from '@/stores';
+
 export interface GridDataPoint {
     x: number;
     y: number;
     size: number;
     market: Market;
+    optionType: 'YES' | 'NO';
 }
 
 export interface GridDimensions {
@@ -34,6 +37,28 @@ export function calculateMarketSize(market: Market): number {
 
     const minSize = 30;
     const maxSize = 120;
+    const sizePer1K = 2;
+
+    if (volume === 0) {
+        return minSize;
+    }
+
+    const additionalSize = Math.floor(volume / 1000) * sizePer1K;
+    const size = Math.min(minSize + additionalSize, maxSize);
+
+    return Math.round(size);
+}
+
+/**
+ * Calculate option size based on option-specific volume with logarithmic scaling
+ * Uses the individual option's fees for sizing
+ */
+export function calculateOptionSize(market: Market, optionType: 'YES' | 'NO'): number {
+    const optionFees = market.options[optionType]?.fees || 0;
+    const volume = optionFees * 25; // Same multiplier as market volume
+
+    const minSize = 20; // Smaller minimum for individual options
+    const maxSize = 100; // Smaller maximum for individual options
     const sizePer1K = 2;
 
     if (volume === 0) {
@@ -83,6 +108,7 @@ export function probabilityToCanvasY(probability: number, canvasHeight: number, 
 
 /**
  * Transform markets to grid data points with configurable scaling
+ * Generates two points per market: one for YES and one for NO option
  */
 export function transformMarketsToGridData(
     markets: Market[],
@@ -90,24 +116,55 @@ export function transformMarketsToGridData(
     canvasHeight: number,
     padding: number,
     maxHours: number,
-    minHours: number
+    minHours: number,
+    optionsFilter: GridOptionsFilter = 'BOTH'
 ): GridDataPoint[] {
-    return markets.map(market => {
+    const dataPoints: GridDataPoint[] = [];
+    
+    markets.forEach(market => {
         const timeRemaining = calculateTimeRemaining(market.end_date);
-        const [probability] = normalizePrices([
-            market.options.YES.currentPrice as number,
-            market.options.NO.currentPrice as number
-        ]);
-        const size = calculateMarketSize(market);
-
         const x = timeToCanvasX(timeRemaining, canvasWidth, padding, maxHours, minHours);
-        const y = probabilityToCanvasY(probability, canvasHeight, padding);
-
-        return {
+        
+        // Create YES point with option-specific size
+        const yesPrice = market.options.YES.currentPrice as number;
+        const yesProbability = normalizePrices([yesPrice, market.options.NO.currentPrice as number])[0];
+        const yesY = probabilityToCanvasY(yesProbability, canvasHeight, padding);
+        const yesSize = calculateOptionSize(market, 'YES');
+        
+        const yesPoint: GridDataPoint = {
             x,
-            y,
-            size,
-            market
+            y: yesY,
+            size: yesSize,
+            market,
+            optionType: 'YES'
         };
+        
+        // Create NO point with option-specific size
+        const noPrice = market.options.NO.currentPrice as number;
+        const noProbability = normalizePrices([market.options.YES.currentPrice as number, noPrice])[1];
+        const noY = probabilityToCanvasY(noProbability, canvasHeight, padding);
+        const noSize = calculateOptionSize(market, 'NO');
+        
+        const noPoint: GridDataPoint = {
+            x,
+            y: noY,
+            size: noSize,
+            market,
+            optionType: 'NO'
+        };
+
+        // Filter points based on options filter
+        if (optionsFilter === 'BOTH') {
+            dataPoints.push(yesPoint, noPoint);
+        } else if (optionsFilter === 'YES') {
+            dataPoints.push(yesPoint);
+        } else if (optionsFilter === 'NO') {
+            dataPoints.push(noPoint);
+        } else if (optionsFilter === 'WINNER') {
+            const winner = yesY < noY ? yesPoint : noPoint;
+            dataPoints.push(winner);
+        }
     });
+    
+    return dataPoints;
 }

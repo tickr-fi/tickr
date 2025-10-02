@@ -1,11 +1,11 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useTableOptionsStore } from '@/stores';
+import { useMarketOptionsStore } from '@/stores';
 
 export function MarketViewModeSelector() {
   const t = useTranslations('markets.viewMode');
-  const { viewMode, setViewMode } = useTableOptionsStore();
+  const { viewMode, setViewMode } = useMarketOptionsStore();
 
   const viewModes = [
     { key: 'table' as const, label: t('table') },

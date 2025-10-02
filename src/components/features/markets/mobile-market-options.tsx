@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useTableOptionsStore } from '@/stores';
+import { useMarketOptionsStore } from '@/stores';
 import { type SortOption } from './market-sorting-dropdown';
 import { Button } from '@/components/ui';
 import { Filter } from 'lucide-react';
@@ -24,7 +24,7 @@ export function MobileMarketOptions({
     setOptionsViewMode,
     setShowAdvancedFilters,
     setShowMobileMenu
-  } = useTableOptionsStore();
+  } = useMarketOptionsStore();
 
   // Filter options data
   const statusFilters = [

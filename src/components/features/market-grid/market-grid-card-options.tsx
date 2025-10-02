@@ -2,23 +2,28 @@
 
 import React from 'react';
 import { Market } from '@/lib/types';
-  import { calculateMarketOptionValues } from '@/lib/utils/market-utils';
-import { useTableOptionsStore } from '@/stores';
+  import { calculateMarketOptionValues, formatChange24h, getChangeColor } from '@/lib/utils/market-utils';
+import { useMarketOptionsStore } from '@/stores';
 
 interface MarketGridCardOptionsProps {
   market: Market;
 }
 
 export function MarketGridCardOptions({ market }: MarketGridCardOptionsProps) {
-  const { optionsViewMode } = useTableOptionsStore();
+  const { optionsViewMode } = useMarketOptionsStore();
   
   const {
     displayOptions,
     displayNames,
-    formattedValues,
-    formattedChange,
-    changeColor
+    formattedValues
   } = calculateMarketOptionValues(market.options, optionsViewMode);
+
+  const yesChange = market.options.YES?.change24h;
+  const noChange = market.options.NO?.change24h;
+  const yesFormattedChange = formatChange24h(yesChange);
+  const noFormattedChange = formatChange24h(noChange);
+  const yesChangeColor = getChangeColor(yesChange);
+  const noChangeColor = getChangeColor(noChange);
 
   return (
     <div className="p-4 border-b border-border">
@@ -27,6 +32,8 @@ export function MarketGridCardOptions({ market }: MarketGridCardOptionsProps) {
           const optionName = displayNames[index] || option;
           const tokenMint = (market.cas as any)?.[option]?.tokenMint;
           const isYesOption = option.toUpperCase().includes('YES');
+          const formattedChange = isYesOption ? yesFormattedChange : noFormattedChange;
+          const changeColor = isYesOption ? yesChangeColor : noChangeColor;
 
           const handleOptionClick = (e: React.MouseEvent) => {
             e.preventDefault();
@@ -52,18 +59,15 @@ export function MarketGridCardOptions({ market }: MarketGridCardOptionsProps) {
               <div className={`text-xl font-bold ${isYesOption ? 'text-green-500' : 'text-red-500'}`}>
                 {formattedValues[index] || '0%'}
               </div>
+              {formattedChange && (
+                <div className={`text-xs font-mono mt-1 ${changeColor}`}>
+                  {formattedChange}
+                </div>
+              )}
             </button>
           );
         })}
       </div>
-
-      {formattedChange && (
-        <div className="text-center mt-3">
-          <div className={`text-xs font-mono ${changeColor}`}>
-            {formattedChange}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

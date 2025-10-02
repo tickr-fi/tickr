@@ -6,7 +6,7 @@ import { Input } from '@/components/ui';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useTableOptionsStore } from '@/stores';
+import { useMarketOptionsStore } from '@/stores';
 import Image from 'next/image';
 
 const navigationItems = [
@@ -19,7 +19,7 @@ const navigationItems = [
 export function Header() {
     const t = useTranslations('navigation');
     const pathname = usePathname();
-    const { searchQuery, setSearchQuery } = useTableOptionsStore();
+    const { searchQuery, setSearchQuery } = useMarketOptionsStore();
 
     return (
         <header className="bg-background border-t border-border border-b border-border px-2 py-2 h-[49px]">

@@ -1,8 +1,8 @@
 import { useTranslations } from 'next-intl';
-import { useTableOptionsStore } from '@/stores';
+import { useMarketOptionsStore } from '@/stores';
 
 export function MarketStatusFilter() {
-  const { statusFilter, setStatusFilter } = useTableOptionsStore();
+  const { statusFilter, setStatusFilter } = useMarketOptionsStore();
   const t = useTranslations('markets.filters');
   const filters = [
     { key: 'ACTIVE' as const, label: t('active') },

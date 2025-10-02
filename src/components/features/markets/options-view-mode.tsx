@@ -1,9 +1,9 @@
 import { useTranslations } from 'next-intl';
-import { useTableOptionsStore } from '@/stores';
+import { useMarketOptionsStore } from '@/stores';
 
 export function OptionsViewMode() {
   const t = useTranslations('markets.optionsViewMode');
-  const { optionsViewMode, setOptionsViewMode } = useTableOptionsStore();
+  const { optionsViewMode, setOptionsViewMode } = useMarketOptionsStore();
 
   const handleToggle = () => {
     setOptionsViewMode(optionsViewMode === 'odds' ? 'prices' : 'odds');

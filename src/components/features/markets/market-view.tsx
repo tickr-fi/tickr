@@ -7,7 +7,7 @@ import { MarketCardsGrid } from '@/components/features/markets/market-cards-grid
 import { MarketGridView } from '@/components/features/market-grid';
 import { MarketHeader } from '@/components/features/markets/market-header';
 import { MobileMarketOptions } from '@/components/features/markets/mobile-market-options';
-import { useTableOptionsStore } from '@/stores';
+import { useMarketOptionsStore } from '@/stores';
 import { useResponsiveViewMode } from '@/hooks/useResponsiveViewMode';
 import { useTranslations } from 'next-intl';
 
@@ -34,7 +34,7 @@ export function MarketView({ markets, isLoading = false, onRefresh }: MarketView
         setLastUpdate,
         viewMode,
         showMobileMenu,
-    } = useTableOptionsStore();
+    } = useMarketOptionsStore();
 
     const { isLargeScreen } = useResponsiveViewMode();
 

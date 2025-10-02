@@ -1,7 +1,7 @@
 'use client';
 
 import { X, RotateCcw, Clock, DollarSign, Eye, TrendingUp } from 'lucide-react';
-import { useTableOptionsStore, TimeFrameFilter, LiquidityFilter, VolumeFilter } from '@/stores';
+import { useMarketOptionsStore, TimeFrameFilter, LiquidityFilter, VolumeFilter } from '@/stores';
 import { useTranslations } from 'next-intl';
 import { Dropdown, DropdownOption } from '@/components/ui/dropdown';
 
@@ -20,7 +20,7 @@ export function MarketAdvancedFilters() {
     showMovers10Percent,
     setShowMovers10Percent,
     setShowAdvancedFilters,
-  } = useTableOptionsStore();
+  } = useMarketOptionsStore();
 
   const timeFrameOptions: DropdownOption[] = [
     { key: 'all', label: t('timeframes.all') },

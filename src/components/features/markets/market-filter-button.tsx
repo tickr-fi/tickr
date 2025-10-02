@@ -2,7 +2,7 @@
 
 import { Filter } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useTableOptionsStore } from '@/stores';
+import { useMarketOptionsStore } from '@/stores';
 
 export function MarketFilterButton() {
   const t = useTranslations('markets.advancedFilters');
@@ -13,7 +13,7 @@ export function MarketFilterButton() {
     showMovers10Percent,
     showAdvancedFilters,
     setShowAdvancedFilters,
-  } = useTableOptionsStore();
+  } = useMarketOptionsStore();
 
   const hasActiveFilters = timeFrameFilter !== 'all' || liquidityFilter !== 'any' || hideIlliquidMarkets || showMovers10Percent;
 

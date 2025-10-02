@@ -113,6 +113,12 @@
       "volume": "VOLUME",
       "share": "SHARE",
       "trade": "TRADE"
+    },
+    "gridOptionsFilter": {
+      "both": "BOTH",
+      "yes": "YES",
+      "no": "NO",
+      "winner": "WINNER"
     }
   }
 }

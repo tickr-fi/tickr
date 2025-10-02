@@ -5,7 +5,7 @@ import { Share2, TrendingUp, TrendingDown, Clock, Zap } from 'lucide-react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { Market } from '@/lib/types';
-import { useTableOptionsStore } from '@/stores';
+import { useMarketOptionsStore } from '@/stores';
 import { Button, useToast } from '@/components/ui';
 import { copyToClipboard } from '@/lib/copy-utils';
 import { cn } from '@/lib';
@@ -27,7 +27,7 @@ interface MarketCardProps {
 }
 
 export function MarketCard({ market }: MarketCardProps) {
-    const { optionsViewMode } = useTableOptionsStore();
+    const { optionsViewMode } = useMarketOptionsStore();
     const { addToast } = useToast();
     const t = useTranslations('markets');
 

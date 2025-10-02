@@ -1,10 +1,10 @@
 'use client';
 
 import { SlidersHorizontal, X } from 'lucide-react';
-import { useTableOptionsStore } from '@/stores';
+import { useMarketOptionsStore } from '@/stores';
 
 export function MobileMenuButton() {
-  const { showMobileMenu, setShowMobileMenu, setShowAdvancedFilters } = useTableOptionsStore();
+  const { showMobileMenu, setShowMobileMenu, setShowAdvancedFilters } = useMarketOptionsStore();
 
   const toggleMenu = () => {
     setShowMobileMenu(!showMobileMenu);

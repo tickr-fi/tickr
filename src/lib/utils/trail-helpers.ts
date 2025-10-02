@@ -1,6 +1,7 @@
 import { HistoricalDataPoint, Market } from '@/lib/types';
 import { timeToCanvasX, probabilityToCanvasY } from './grid-utils';
-import { getPriceDivider, normalizePriceWithDivider } from './market-utils';
+import { getPriceDivider, normalizePriceWithDivider, normalizePrices } from './market-utils';
+import { type GridOptionsFilter } from '@/stores';
 
 /**
  * Time period options for price aggregation
@@ -167,17 +168,35 @@ export function formatTimePeriod(period: TimePeriod): string {
 }
 
 /**
- * Get trail color based on 24h change and hover state
+ * Get trail color based on option type, 24h change, hover state, and options filter
  */
-export function getTrailColor(change24h: number | undefined, isHovered: boolean): string {
+export function getTrailColor(
+  optionType: 'YES' | 'NO', 
+  change24h: number | undefined, 
+  isHovered: boolean, 
+  optionsFilter: GridOptionsFilter = 'BOTH'
+): string {
+  const opacity = isHovered ? 'ff' : '40';
+  
+  // If filter is BOTH, use option-based colors
+  if (optionsFilter === 'BOTH') {
+    const baseColors = {
+      YES: '#00ff66',
+      NO: '#ff4500'
+    };
+    return `${baseColors[optionType]}${opacity}`;
+  }
+  
+  // If filter is not BOTH, use 24h change-based colors
   if (change24h !== undefined && change24h !== null) {
     if (change24h > 0) {
-      return isHovered ? '#00ff66' : '#00ff6640'; // Green
+      return `#00ff66${opacity}`; // Green for positive change
     } else if (change24h < 0) {
-      return isHovered ? '#ff4500' : '#ff450040'; // Red
+      return `#ff4500${opacity}`; // Red for negative change
     }
   }
-  return isHovered ? '#9ca3af' : '#9ca3af40'; // Gray
+  
+  return `#9ca3af${opacity}`; // Gray for no change data
 }
 
 /**
@@ -219,20 +238,22 @@ export function calculateTimeRemainingForPoint(
 }
 
 /**
- * Draw a single trail for a market
+ * Draw a single trail for a market option
  */
 export function drawMarketTrail(
   ctx: CanvasRenderingContext2D,
   market: Market,
+  optionType: 'YES' | 'NO',
   isHovered: boolean,
   canvasWidth: number,
   canvasHeight: number,
   padding: number,
   timePeriod: TimePeriod,
   maxHours: number,
-  minHours: number
+  minHours: number,
+  optionsFilter: GridOptionsFilter = 'BOTH'
 ): void {
-  const priceHistory = market.options.YES?.priceHistory || [];
+  const priceHistory = market.options[optionType]?.priceHistory || [];
   const divider = getPriceDivider(
     market.options.YES?.currentPrice as number,
     market.options.NO?.currentPrice as number
@@ -243,8 +264,8 @@ export function drawMarketTrail(
     return;
   }
 
-  const change24h = market.options.YES?.change24h;
-  const trailColor = getTrailColor(change24h, isHovered);
+  const change24h = market.options[optionType]?.change24h;
+  const trailColor = getTrailColor(optionType, change24h, isHovered, optionsFilter);
 
   // Set trail style
   ctx.strokeStyle = trailColor;
@@ -294,7 +315,7 @@ export function drawMarketTrail(
 }
 
 /**
- * Draw all trails for multiple markets
+ * Draw all trails for multiple markets based on options filter
  */
 export function drawAllTrails(
   ctx: CanvasRenderingContext2D,
@@ -305,10 +326,30 @@ export function drawAllTrails(
   padding: number,
   timePeriod: TimePeriod,
   maxHours: number,
-  minHours: number
+  minHours: number,
+  optionsFilter: GridOptionsFilter = 'BOTH'
 ): void {
-  markets.forEach((market, index) => {
-    const isHovered = hoveredPointIndex === index;
-    drawMarketTrail(ctx, market, isHovered, canvasWidth, canvasHeight, padding, timePeriod, maxHours, minHours);
+  markets.forEach((market, marketIndex) => {
+    // Check if either point of this market is hovered
+    const yesPointIndex = marketIndex * 2; // YES is the first point for each market
+    const noPointIndex = marketIndex * 2 + 1; // NO is the second point for each market
+    const isMarketHovered = hoveredPointIndex === yesPointIndex || hoveredPointIndex === noPointIndex;
+    
+    // Draw trails based on options filter
+    if (optionsFilter === 'BOTH') {
+      drawMarketTrail(ctx, market, 'YES', isMarketHovered, canvasWidth, canvasHeight, padding, timePeriod, maxHours, minHours, optionsFilter);
+      drawMarketTrail(ctx, market, 'NO', isMarketHovered, canvasWidth, canvasHeight, padding, timePeriod, maxHours, minHours, optionsFilter);
+    } else if (optionsFilter === 'YES') {
+      drawMarketTrail(ctx, market, 'YES', isMarketHovered, canvasWidth, canvasHeight, padding, timePeriod, maxHours, minHours, optionsFilter);
+    } else if (optionsFilter === 'NO') {
+      drawMarketTrail(ctx, market, 'NO', isMarketHovered, canvasWidth, canvasHeight, padding, timePeriod, maxHours, minHours, optionsFilter);
+    } else if (optionsFilter === 'WINNER') {
+      const yesPrice = market.options.YES?.currentPrice as number;
+      const noPrice = market.options.NO?.currentPrice as number;
+      const yesProbability = normalizePrices([yesPrice, noPrice])[0];
+      const noProbability = normalizePrices([yesPrice, noPrice])[1];
+      const winner = yesProbability > noProbability ? 'YES' : 'NO';
+      drawMarketTrail(ctx, market, winner, isMarketHovered, canvasWidth, canvasHeight, padding, timePeriod, maxHours, minHours, optionsFilter);
+    }
   });
 }

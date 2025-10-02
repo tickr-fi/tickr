@@ -201,6 +201,22 @@ export function getMarketImageUrl(market: {
 }
 
 /**
+ * Gets the image URL for a specific option (YES or NO)
+ * Falls back to market image if option image is not available
+ */
+export function getOptionImageUrl(market: {
+  marketImageUrl?: string;
+  options?: {
+    YES?: { imageUrl?: string };
+    NO?: { imageUrl?: string };
+  };
+}, optionType: 'YES' | 'NO'): string | undefined {
+  const optionImage = market.options?.[optionType]?.imageUrl;
+  const marketImage = market.marketImageUrl;
+  return optionImage || marketImage;
+}
+
+/**
  * Formats duration since creation (e.g., "2d 5h", "3h")
  */
 export function formatDurationSinceCreation(createdAt?: string): string {

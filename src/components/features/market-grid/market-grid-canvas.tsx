@@ -4,8 +4,8 @@ import { useRef, useEffect, useCallback, forwardRef, useImperativeHandle } from 
 import { Market } from '@/lib/types';
 import { drawAllTrails } from '@/lib/utils/trail-helpers';
 import { timeToCanvasX } from '@/lib/utils/grid-utils';
-import { TimeFilter } from './market-grid-time-filter';
 import { TimePeriod } from '@/lib/utils/trail-helpers';
+import { useMarketOptionsStore } from '@/stores';
 import { 
   getTimeLevelsForFilter, 
   getTimeLabelsForFilter, 
@@ -19,7 +19,6 @@ interface MarketGridCanvasProps {
   height: number;
   markets: Market[];
   hoveredPointIndex: number | null;
-  timeFilter?: TimeFilter;
 }
 
 export interface MarketGridCanvasRef {
@@ -28,8 +27,10 @@ export interface MarketGridCanvasRef {
 }
 
 export const MarketGridCanvas = forwardRef<MarketGridCanvasRef, MarketGridCanvasProps>(
-  function MarketGridCanvas({ width, height, markets, hoveredPointIndex, timeFilter = 'All' }, ref) {
+  function MarketGridCanvas({ width, height, markets, hoveredPointIndex }, ref) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    
+    const { gridTimeFilter: timeFilter, gridOptionsFilter: optionsFilter } = useMarketOptionsStore();
 
     useImperativeHandle(ref, () => ({
       getCanvas: () => canvasRef.current,
@@ -162,8 +163,8 @@ export const MarketGridCanvas = forwardRef<MarketGridCanvasRef, MarketGridCanvas
 
     // Draw all trails with dynamic aggregation and scaling
     const padding = 60;
-    drawAllTrails(ctx, markets, hoveredPointIndex, width, height, padding, aggregationPeriod, maxHours, minHours);
-    }, [drawGrid, drawAxesLabels, width, height, markets, hoveredPointIndex, timeFilter]);
+    drawAllTrails(ctx, markets, hoveredPointIndex, width, height, padding, aggregationPeriod, maxHours, minHours, optionsFilter);
+    }, [drawGrid, drawAxesLabels, width, height, markets, hoveredPointIndex, timeFilter, optionsFilter]);
 
     // Redraw when dimensions change
     useEffect(() => {

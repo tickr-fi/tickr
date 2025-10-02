@@ -4,24 +4,47 @@ import React, { useState } from 'react';
 import { Market } from '@/lib/types';
 import Image from 'next/image';
 import { MarketGridHoverTooltip } from './market-grid-hover-tooltip';
-import { getMarketImageUrl } from '@/lib/utils/market-utils';
+import { getOptionImageUrl } from '@/lib/utils/market-utils';
+import { useMarketOptionsStore } from '@/stores';
 
 interface MarketGridPointProps {
     market: Market;
     x: number;
     y: number;
     size: number;
+    optionType: 'YES' | 'NO';
+    isPairedHovered?: boolean;
     onHoverChange?: (isHovered: boolean) => void;
 }
 
-export function MarketGridPoint({ market, x, y, size, onHoverChange }: MarketGridPointProps) {
+export function MarketGridPoint({ 
+    market, 
+    x, 
+    y, 
+    size, 
+    optionType, 
+    isPairedHovered = false, 
+    onHoverChange 
+}: MarketGridPointProps) {
     const [isHovered, setIsHovered] = useState(false);
     const [isPinned, setIsPinned] = useState(false);
-    const imageUrl = getMarketImageUrl(market);
+    const imageUrl = getOptionImageUrl(market, optionType);
+    
+    const { gridOptionsFilter: optionsFilter } = useMarketOptionsStore();
 
-    const change24h = market.options.YES?.change24h;
+    const change24h = market.options[optionType]?.change24h;
 
     const getBorderColor = () => {
+        // If filter is BOTH, use option-based colors
+        if (optionsFilter === 'BOTH') {
+            if (optionType === 'YES') {
+                return 'border-green-500';
+            } else {
+                return 'border-red-500';
+            }
+        }
+        
+        // If filter is not BOTH, use 24h change-based colors
         if (change24h !== undefined && change24h !== null) {
             if (change24h > 0) {
                 return 'border-green-500';
@@ -44,7 +67,7 @@ export function MarketGridPoint({ market, x, y, size, onHoverChange }: MarketGri
     return (
         <>
             <div
-                className="absolute cursor-pointer transition-all duration-200 hover:scale-110"
+                className={`absolute cursor-pointer transition-all duration-200 ${(isHovered || isPairedHovered) ? 'scale-125' : 'hover:scale-125'}`}
                 style={{
                     left: `${x - size / 2}px`,
                     top: `${y - size / 2}px`,

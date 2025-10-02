@@ -1,4 +1,4 @@
-import { useTableOptionsStore } from '@/stores';
+import { useMarketOptionsStore } from '@/stores';
 import { calculateMarketOptionValues } from '@/lib/utils/market-utils';
 import { Tooltip } from '@/components/ui';
 
@@ -24,7 +24,7 @@ interface MarketOptionsProps {
 }
 
 export function MarketOptions({ options }: MarketOptionsProps) {
-  const { optionsViewMode } = useTableOptionsStore();
+  const { optionsViewMode } = useMarketOptionsStore();
 
   const {
     displayOptions: calculatedDisplayOptions,

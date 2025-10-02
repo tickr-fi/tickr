@@ -1,5 +1,5 @@
 import { useTranslations } from 'next-intl';
-import { useTableOptionsStore } from '@/stores';
+import { useMarketOptionsStore } from '@/stores';
 
 interface ColumnConfig {
   key: string;
@@ -59,7 +59,7 @@ const getColumns = (t: any, optionsViewMode: string): ColumnConfig[] => [
 
 export function MarketTableHeader() {
   const t = useTranslations('markets.headers');
-  const { optionsViewMode } = useTableOptionsStore();
+  const { optionsViewMode } = useMarketOptionsStore();
   const columns = getColumns(t, optionsViewMode);
 
   return (

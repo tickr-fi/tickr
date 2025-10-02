@@ -141,37 +141,38 @@ export class MarketsController {
   }
 
   private async fetchHistoricalPrices(markets: Market[]): Promise<void> {
-    const yesTokenMints = markets.flatMap(market =>
-      [market.cas.YES.tokenMint]
+    const tokenMints = markets.flatMap(market =>
+      [market.cas.YES.tokenMint, market.cas.NO.tokenMint]
     );
 
-    if (yesTokenMints.length === 0) {
+    if (tokenMints.length === 0) {
       return;
     }
 
-    const historicalPromises = yesTokenMints.map(tokenMint =>
+    const historicalPromises = tokenMints.map(tokenMint =>
       railwayApi.getHistoricalPrice(tokenMint, 500).catch(() => ({ success: false, data: null }))
     );
 
     const historicalResults = await Promise.all(historicalPromises);
 
-    const tokenToMarketMap = new Map<string, Market>();
+    const tokenToMarketMap = new Map<string, Market['options']['YES']>();
     markets.forEach(market => {
-      tokenToMarketMap.set(market.cas.YES.tokenMint, market);
+      tokenToMarketMap.set(market.cas.YES.tokenMint, market.options.YES);
+      tokenToMarketMap.set(market.cas.NO.tokenMint, market.options.NO);
     });
 
-    yesTokenMints.forEach((tokenMint, index) => {
+    tokenMints.forEach((tokenMint, index) => {
       const result = historicalResults[index];
-      const market = tokenToMarketMap.get(tokenMint);
-      const currentPrice = market?.options.YES?.currentPrice;
+      const option = tokenToMarketMap.get(tokenMint);
+      const currentPrice = option?.currentPrice;
 
-      if (result.success && result.data && currentPrice !== undefined && market) {
+      if (result.success && result.data && currentPrice !== undefined && option) {
         const change24h = this.calculate24hChange(result.data, currentPrice);
-        market.options.YES.change24h = change24h;
+        option.change24h = change24h;
 
         if (result.data.historicalData) {
-          market.options.YES.priceHistory = result.data.historicalData.slice(0, -1);
-          market.options.YES.priceHistory.unshift({
+          option.priceHistory = result.data.historicalData.slice(0, -1);
+          option.priceHistory.unshift({
             timestamp: new Date().toISOString(),
             price: currentPrice,
             volume: result.data.historicalData[0].volume,

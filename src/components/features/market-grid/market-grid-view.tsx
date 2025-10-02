@@ -5,25 +5,34 @@ import { Market } from '@/lib/types';
 import { useTranslations } from 'next-intl';
 import { MarketGridCanvas, MarketGridCanvasRef } from './market-grid-canvas';
 import { MarketGridPoint } from './market-grid-point';
-import { MarketGridTimeFilter, type TimeFilter } from './market-grid-time-filter';
+import { MarketGridTimeFilter } from './market-grid-time-filter';
+import { MarketGridOptionsFilter } from './market-grid-options-filter';
 import { useCanvasDimensions } from '@/hooks/useCanvasDimensions';
 import { transformMarketsToGridData } from '@/lib/utils/grid-utils';
 import { filterMarketsByTime, getMaxTimeRangeForFilter, getMinTimeRangeForFilter } from '@/lib/utils/time-filter-utils';
+import { useMarketOptionsStore, type GridTimeFilter } from '@/stores';
 
 interface MarketGridViewProps {
   markets: Market[];
   isLoading?: boolean;
 }
 
-const TIME_FILTER_ORDER: TimeFilter[] = ['<1h', '<24h', '<7d', '<30d', 'All'];
+const TIME_FILTER_ORDER: GridTimeFilter[] = ['<1h', '<24h', '<7d', '<30d', 'All'];
 
 export function MarketGridView({ markets, isLoading = false }: MarketGridViewProps) {
   const t = useTranslations('markets');
   const { dimensions } = useCanvasDimensions('[data-grid-container]');
   const [hoveredPointIndex, setHoveredPointIndex] = useState<number | null>(null);
-  const [timeFilter, setTimeFilter] = useState<TimeFilter>('All');
+  const [hoveredMarketSlug, setHoveredMarketSlug] = useState<string | null>(null);
   const canvasRef = useRef<MarketGridCanvasRef>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  const { 
+    gridTimeFilter: timeFilter, 
+    setGridTimeFilter: setTimeFilter,
+    gridOptionsFilter: optionsFilter,
+    setGridOptionsFilter: setOptionsFilter
+  } = useMarketOptionsStore();
   
   const filteredMarkets = filterMarketsByTime(markets, timeFilter);
   
@@ -36,11 +45,19 @@ export function MarketGridView({ markets, isLoading = false }: MarketGridViewPro
     dimensions.height,
     60,
     maxHours,
-    minHours
+    minHours,
+    optionsFilter
   );
 
   const handleHoverChange = (pointIndex: number, isHovered: boolean) => {
-    setHoveredPointIndex(isHovered ? pointIndex : null);
+    if (isHovered) {
+      const hoveredPoint = dataPoints[pointIndex];
+      setHoveredMarketSlug(hoveredPoint.market.slug);
+      setHoveredPointIndex(pointIndex);
+    } else {
+      setHoveredMarketSlug(null);
+      setHoveredPointIndex(null);
+    }
   };
 
   const handleWheel = useCallback((event: WheelEvent) => {
@@ -61,7 +78,7 @@ export function MarketGridView({ markets, isLoading = false }: MarketGridViewPro
     if (newFilter !== timeFilter) {
       setTimeFilter(newFilter);
     }
-  }, [timeFilter]);
+  }, [timeFilter, setTimeFilter]);
 
   // Set up wheel event listener
   useEffect(() => {
@@ -96,10 +113,16 @@ export function MarketGridView({ markets, isLoading = false }: MarketGridViewPro
       className="w-full h-[calc(100vh-200px)] overflow-hidden -mx-4 relative"
       data-grid-container
     >
-      <MarketGridTimeFilter 
-        selectedFilter={timeFilter}
-        onFilterChange={setTimeFilter}
-      />
+      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10 flex gap-4">
+        <MarketGridTimeFilter 
+          selectedFilter={timeFilter}
+          onFilterChange={setTimeFilter}
+        />
+        <MarketGridOptionsFilter 
+          selectedFilter={optionsFilter}
+          onFilterChange={setOptionsFilter}
+        />
+      </div>
       
       <div className="ml-4 relative">
         <MarketGridCanvas 
@@ -108,19 +131,24 @@ export function MarketGridView({ markets, isLoading = false }: MarketGridViewPro
           height={dimensions.height}
           markets={filteredMarkets}
           hoveredPointIndex={hoveredPointIndex}
-          timeFilter={timeFilter}
         />
         
-        {dataPoints.map((dataPoint, index) => (
-          <MarketGridPoint
-            key={`${dataPoint.market.slug}-${index}`}
-            market={dataPoint.market}
-            x={dataPoint.x}
-            y={dataPoint.y}
-            size={dataPoint.size}
-            onHoverChange={(isHovered) => handleHoverChange(index, isHovered)}
-          />
-        ))}
+        {dataPoints.map((dataPoint, index) => {
+          const isPairedHovered = hoveredMarketSlug === dataPoint.market.slug;
+          
+          return (
+            <MarketGridPoint
+              key={`${dataPoint.market.slug}-${dataPoint.optionType}-${index}`}
+              market={dataPoint.market}
+              x={dataPoint.x}
+              y={dataPoint.y}
+              size={dataPoint.size}
+              optionType={dataPoint.optionType}
+              isPairedHovered={isPairedHovered}
+              onHoverChange={(isHovered) => handleHoverChange(index, isHovered)}
+            />
+          );
+        })}
       </div>
     </div>
   );
