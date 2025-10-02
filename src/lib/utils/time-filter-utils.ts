@@ -1,11 +1,11 @@
 import { Market } from '@/lib/types';
 import { calculateTimeRemaining } from './grid-utils';
-import { TimeFilter } from '@/components/features/market-grid';
+import { type GridTimeFilter } from '@/stores';
 
 /**
  * Get maximum hours for each time filter
  */
-export function getMaxHoursForFilter(timeFilter: TimeFilter): number {
+export function getMaxHoursForFilter(timeFilter: GridTimeFilter): number {
   switch (timeFilter) {
     case '<1h':
       return 1; // 1 hour
@@ -25,7 +25,7 @@ export function getMaxHoursForFilter(timeFilter: TimeFilter): number {
 /**
  * Filter markets based on time remaining
  */
-export function filterMarketsByTime(markets: Market[], timeFilter: TimeFilter): Market[] {
+export function filterMarketsByTime(markets: Market[], timeFilter: GridTimeFilter): Market[] {
   if (timeFilter === 'All') {
     return markets;
   }
@@ -42,7 +42,7 @@ export function filterMarketsByTime(markets: Market[], timeFilter: TimeFilter): 
 /**
  * Get appropriate time labels based on selected filter
  */
-export function getTimeLabelsForFilter(timeFilter: TimeFilter) {
+export function getTimeLabelsForFilter(timeFilter: GridTimeFilter) {
   switch (timeFilter) {
     case '<1h':
       return [
@@ -111,7 +111,7 @@ export function getTimeLabelsForFilter(timeFilter: TimeFilter) {
 /**
  * Get appropriate time levels for grid lines based on selected filter
  */
-export function getTimeLevelsForFilter(timeFilter: TimeFilter): number[] {
+export function getTimeLevelsForFilter(timeFilter: GridTimeFilter): number[] {
   switch (timeFilter) {
     case '<1h':
       return [0.1, 0.25, 0.5, 1];
@@ -130,7 +130,7 @@ export function getTimeLevelsForFilter(timeFilter: TimeFilter): number[] {
 /**
  * Get the maximum time range for X-axis scaling based on selected filter
  */
-export function getMaxTimeRangeForFilter(timeFilter: TimeFilter): number {
+export function getMaxTimeRangeForFilter(timeFilter: GridTimeFilter): number {
   switch (timeFilter) {
     case '<1h':
       return 1; // 1 hour
@@ -157,7 +157,7 @@ export function getMinTimeRangeForFilter(): number {
 /**
  * Get appropriate aggregation time period based on selected filter
  */
-export function getAggregationPeriodForFilter(timeFilter: TimeFilter): string {
+export function getAggregationPeriodForFilter(timeFilter: GridTimeFilter): string {
   switch (timeFilter) {
     case '<1h':
       return '5m'; // 5 minutes for sub-hour analysis
