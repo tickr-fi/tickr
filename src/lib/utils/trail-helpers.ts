@@ -320,7 +320,7 @@ export function drawMarketTrail(
 export function drawAllTrails(
   ctx: CanvasRenderingContext2D,
   markets: Market[],
-  hoveredPointIndex: number | null,
+  hoveredMarketSlug: string | null,
   canvasWidth: number,
   canvasHeight: number,
   padding: number,
@@ -329,11 +329,8 @@ export function drawAllTrails(
   minHours: number,
   optionsFilter: GridOptionsFilter = 'BOTH'
 ): void {
-  markets.forEach((market, marketIndex) => {
-    // Check if either point of this market is hovered
-    const yesPointIndex = marketIndex * 2; // YES is the first point for each market
-    const noPointIndex = marketIndex * 2 + 1; // NO is the second point for each market
-    const isMarketHovered = hoveredPointIndex === yesPointIndex || hoveredPointIndex === noPointIndex;
+  markets.forEach((market) => {
+    const isMarketHovered = hoveredMarketSlug === market.slug;
     
     // Draw trails based on options filter
     if (optionsFilter === 'BOTH') {

@@ -22,7 +22,6 @@ const TIME_FILTER_ORDER: GridTimeFilter[] = ['<1h', '<24h', '<7d', '<30d', 'All'
 export function MarketGridView({ markets, isLoading = false }: MarketGridViewProps) {
   const t = useTranslations('markets');
   const { dimensions } = useCanvasDimensions('[data-grid-container]');
-  const [hoveredPointIndex, setHoveredPointIndex] = useState<number | null>(null);
   const [hoveredMarketSlug, setHoveredMarketSlug] = useState<string | null>(null);
   const canvasRef = useRef<MarketGridCanvasRef>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -53,10 +52,8 @@ export function MarketGridView({ markets, isLoading = false }: MarketGridViewPro
     if (isHovered) {
       const hoveredPoint = dataPoints[pointIndex];
       setHoveredMarketSlug(hoveredPoint.market.slug);
-      setHoveredPointIndex(pointIndex);
     } else {
       setHoveredMarketSlug(null);
-      setHoveredPointIndex(null);
     }
   };
 
@@ -130,7 +127,7 @@ export function MarketGridView({ markets, isLoading = false }: MarketGridViewPro
           width={dimensions.width} 
           height={dimensions.height}
           markets={filteredMarkets}
-          hoveredPointIndex={hoveredPointIndex}
+          hoveredMarketSlug={hoveredMarketSlug}
         />
         
         {dataPoints.map((dataPoint, index) => {
