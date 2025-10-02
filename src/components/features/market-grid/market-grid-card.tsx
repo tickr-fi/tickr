@@ -21,9 +21,14 @@ export function MarketGridCard({ market, onClose, highlightedOptionType }: Marke
 
     const timeRemaining = formatTimeRemaining(market.end_date);
 
-    const handleClose = (e: React.MouseEvent) => {
+    const handleClose = (e: React.MouseEvent | React.TouchEvent) => {
         e.preventDefault();
         e.stopPropagation();
+        // Additional Safari iOS fix
+        if (e.nativeEvent) {
+            e.nativeEvent.preventDefault();
+            e.nativeEvent.stopPropagation();
+        }
         onClose?.();
     };
 
@@ -48,9 +53,24 @@ export function MarketGridCard({ market, onClose, highlightedOptionType }: Marke
             {/* Market Description */}
             <div
                 className="p-4 border-b border-border cursor-pointer hover:bg-muted/20 transition-colors"
-                onClick={(e) => {
+                onClick={(e: React.MouseEvent | React.TouchEvent) => {
                     e.preventDefault();
                     e.stopPropagation();
+                    // Additional Safari iOS fix
+                    if (e.nativeEvent) {
+                        e.nativeEvent.preventDefault();
+                        e.nativeEvent.stopPropagation();
+                    }
+                    window.open(`https://pmx.trade/markets/${market.slug}`, '_blank');
+                }}
+                onTouchEnd={(e: React.TouchEvent) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    // Additional Safari iOS fix
+                    if (e.nativeEvent) {
+                        e.nativeEvent.preventDefault();
+                        e.nativeEvent.stopPropagation();
+                    }
                     window.open(`https://pmx.trade/markets/${market.slug}`, '_blank');
                 }}
             >

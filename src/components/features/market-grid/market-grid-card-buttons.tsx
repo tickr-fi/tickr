@@ -13,15 +13,25 @@ interface MarketGridCardButtonsProps {
 export function MarketGridCardButtons({ market }: MarketGridCardButtonsProps) {
   const t = useTranslations('markets.gridCard');
   
-  const handleTrade = (e: React.MouseEvent) => {
+  const handleTrade = (e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    // Additional Safari iOS fix
+    if (e.nativeEvent) {
+      e.nativeEvent.preventDefault();
+      e.nativeEvent.stopPropagation();
+    }
     window.open(`https://pmx.trade/markets/${market.slug}`, '_blank');
   };
   
-  const handleShare = (e: React.MouseEvent) => {
+  const handleShare = (e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    // Additional Safari iOS fix
+    if (e.nativeEvent) {
+      e.nativeEvent.preventDefault();
+      e.nativeEvent.stopPropagation();
+    }
     navigator.clipboard.writeText(`${window.location.origin}/markets/${market.slug}`);
   };
 

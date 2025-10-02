@@ -7,7 +7,7 @@ interface ButtonProps {
   variant?: 'primary' | 'secondary' | 'outline';
   size?: 'sm' | 'md' | 'lg';
   className?: string;
-  onClick?: (e: React.MouseEvent) => void;
+  onClick?: (e: React.MouseEvent | React.TouchEvent) => void;
   type?: 'button' | 'submit' | 'reset';
   disabled?: boolean;
   disableHoverAnimation?: boolean;
@@ -50,6 +50,7 @@ export function Button({
     <button
       type={type}
       onClick={onClick}
+      onTouchEnd={onClick}
       disabled={disabled}
       className={cn(
         baseClasses,

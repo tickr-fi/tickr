@@ -36,9 +36,14 @@ export function MarketGridCardOptions({ market, highlightedOptionType }: MarketG
           const formattedChange = isYesOption ? yesFormattedChange : noFormattedChange;
           const changeColor = isYesOption ? yesChangeColor : noChangeColor;
 
-          const handleOptionClick = (e: React.MouseEvent) => {
+          const handleOptionClick = (e: React.MouseEvent | React.TouchEvent) => {
             e.preventDefault();
             e.stopPropagation();
+            // Additional Safari iOS fix
+            if (e.nativeEvent) {
+              e.nativeEvent.preventDefault();
+              e.nativeEvent.stopPropagation();
+            }
             if (tokenMint) {
               window.open(`https://jup.ag/tokens/${tokenMint}`, '_blank');
             }
@@ -53,6 +58,7 @@ export function MarketGridCardOptions({ market, highlightedOptionType }: MarketG
             <button
               key={option}
               onClick={handleOptionClick}
+              onTouchEnd={handleOptionClick}
               className={`flex-1 py-2 px-3 rounded-lg text-center transition-all duration-200
                 cursor-pointer hover:scale-105 hover:shadow-md ${isYesOption
                   ? `bg-green-500/10 border border-green-500/20 hover:bg-green-500/20
