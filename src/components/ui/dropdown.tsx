@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
 
 export interface DropdownOption {
@@ -16,6 +16,7 @@ interface DropdownProps {
   placeholder?: string;
   className?: string;
   variant?: 'muted' | 'secondary';
+  triggerIcon?: React.ComponentType<{ className?: string }>;
 }
 
 export function Dropdown({
@@ -24,12 +25,14 @@ export function Dropdown({
   onOptionChange,
   placeholder = 'Select option',
   className = '',
-  variant = 'secondary'
+  variant = 'secondary',
+  triggerIcon
 }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const selectedLabel = options.find(option => option.key === selectedOption)?.label || placeholder;
+  const selectedOptionData = options.find(option => option.key === selectedOption);
+  const selectedLabel = selectedOptionData?.label || placeholder;
 
   const getVariantClasses = () => {
     if (variant === 'muted') {
@@ -40,9 +43,9 @@ export function Dropdown({
       };
     }
     return {
-      trigger: 'bg-secondary text-secondary-foreground hover:bg-primary hover:text-primary-foreground',
+      trigger: 'bg-secondary text-muted-foreground hover:bg-primary hover:text-primary-foreground',
       menu: 'bg-secondary',
-      option: 'text-secondary-foreground hover:bg-primary hover:text-primary-foreground'
+      option: 'text-muted-foreground hover:bg-primary hover:text-primary-foreground'
     };
   };
 
@@ -72,13 +75,16 @@ export function Dropdown({
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={[
-          'flex items-center justify-between gap-2 px-2 py-1 text-xs font-mono font-medium',
+          'flex items-center justify-between gap-2 px-2 py-1.5 text-xs font-mono font-medium',
           'transition-colors rounded cursor-pointer w-full',
           variantClasses.trigger
         ].join(' ')}
       >
         <span>{selectedLabel}</span>
-        <ChevronDown className={`w-3 h-3 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <div className="flex items-center gap-1">
+          {triggerIcon && React.createElement(triggerIcon)}
+          <ChevronDown className={`w-3 h-3 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        </div>
       </button>
 
       {/* Dropdown Menu */}

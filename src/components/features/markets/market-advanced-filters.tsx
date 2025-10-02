@@ -125,7 +125,7 @@ export function MarketAdvancedFilters() {
         {/* Checkboxes Column */}
         <div className="flex-1 flex flex-col gap-3">
           {/* Hide Illiquid Markets Checkbox */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 cursor-pointer" onClick={() => setHideIlliquidMarkets(!hideIlliquidMarkets)}>
             <input
               type="checkbox"
               id="hideIlliquid"
@@ -136,14 +136,14 @@ export function MarketAdvancedFilters() {
               }}
               className="w-4 h-4 text-orange-500 bg-secondary-background border-border rounded focus:ring-orange-500 focus:ring-2 cursor-pointer"
             />
-            <label htmlFor="hideIlliquid" className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground">
+            <label htmlFor="hideIlliquid" className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground cursor-pointer">
               <Eye className="w-3 h-3" />
               {t('hideIlliquidMarkets')}
             </label>
           </div>
 
           {/* Movers 10% Checkbox */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 cursor-pointer" onClick={() => setShowMovers10Percent(!showMovers10Percent)}>
             <input
               type="checkbox"
               id="showMovers"
@@ -154,7 +154,7 @@ export function MarketAdvancedFilters() {
               }}
               className="w-4 h-4 text-orange-500 bg-secondary-background border-border rounded focus:ring-orange-500 focus:ring-2 cursor-pointer"
             />
-            <label htmlFor="showMovers" className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground">
+            <label htmlFor="showMovers" className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground cursor-pointer">
               <TrendingUp className="w-3 h-3" />
               {t('showMovers10Percent')}
             </label>

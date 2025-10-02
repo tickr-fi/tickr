@@ -20,15 +20,19 @@ export function MarketFilterButton() {
     volumeFilter !== 'any' || hideIlliquidMarkets || showMovers10Percent;
 
   return (
-    <button
-      onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-      className={`flex items-center gap-2 px-3 py-1.5 text-xs font-mono font-medium transition-colors rounded cursor-pointer ${hasActiveFilters
-        ? 'bg-orange-500 text-white hover:bg-orange-600'
-        : 'bg-secondary-background text-muted-foreground hover:bg-muted hover:text-foreground'
-        }`}
-    >
-      <Filter className="w-3 h-3" />
-      {t('button')}
-    </button>
+    <div className="inline-flex bg-secondary rounded-md p-0.5">
+      <button
+        onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+        className={`flex items-center gap-1.5 px-2 py-1.5 text-xs font-mono
+          font-medium transition-all duration-200 rounded-sm cursor-pointer ${hasActiveFilters
+            ? 'bg-primary text-primary-foreground shadow-sm'
+            : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
+          }`}
+        title={t('button')}
+      >
+        <Filter className="w-3.5 h-3.5" />
+        <span className="hidden sm:inline">{t('button')}</span>
+      </button>
+    </div>
   );
 }
