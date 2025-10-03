@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Market } from '@/lib/types';
-import { calculateMarketOptionValues, formatChange24h, getChangeColor } from '@/lib/utils/market-utils';
+import { preventEventPropagation, calculateMarketOptionValues, formatChange24h, getChangeColor } from '@/lib/utils';
 import { useMarketOptionsStore } from '@/stores';
 
 interface MarketGridCardOptionsProps {
@@ -37,13 +37,7 @@ export function MarketGridCardOptions({ market, highlightedOptionType }: MarketG
           const changeColor = isYesOption ? yesChangeColor : noChangeColor;
 
           const handleOptionClick = (e: React.MouseEvent | React.TouchEvent) => {
-            e.preventDefault();
-            e.stopPropagation();
-            // Additional Safari iOS fix
-            if (e.nativeEvent) {
-              e.nativeEvent.preventDefault();
-              e.nativeEvent.stopPropagation();
-            }
+            preventEventPropagation(e);
             if (tokenMint) {
               window.open(`https://jup.ag/tokens/${tokenMint}`, '_blank');
             }

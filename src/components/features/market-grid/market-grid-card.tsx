@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Market } from '@/lib/types';
-import { getMarketImageUrl, formatTimeRemaining, formatVolume } from '@/lib/utils/market-utils';
+import { preventEventPropagation, getMarketImageUrl, formatTimeRemaining, formatVolume } from '@/lib/utils';
 import { Clock, X } from 'lucide-react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
@@ -22,13 +22,7 @@ export function MarketGridCard({ market, onClose, highlightedOptionType }: Marke
     const timeRemaining = formatTimeRemaining(market.end_date);
 
     const handleClose = (e: React.MouseEvent | React.TouchEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-        // Additional Safari iOS fix
-        if (e.nativeEvent) {
-            e.nativeEvent.preventDefault();
-            e.nativeEvent.stopPropagation();
-        }
+        preventEventPropagation(e);
         onClose?.();
     };
 
@@ -54,23 +48,11 @@ export function MarketGridCard({ market, onClose, highlightedOptionType }: Marke
             <div
                 className="p-4 border-b border-border cursor-pointer hover:bg-muted/20 transition-colors"
                 onClick={(e: React.MouseEvent | React.TouchEvent) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    // Additional Safari iOS fix
-                    if (e.nativeEvent) {
-                        e.nativeEvent.preventDefault();
-                        e.nativeEvent.stopPropagation();
-                    }
+                    preventEventPropagation(e);
                     window.open(`https://pmx.trade/markets/${market.slug}`, '_blank');
                 }}
                 onTouchEnd={(e: React.TouchEvent) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    // Additional Safari iOS fix
-                    if (e.nativeEvent) {
-                        e.nativeEvent.preventDefault();
-                        e.nativeEvent.stopPropagation();
-                    }
+                    preventEventPropagation(e);
                     window.open(`https://pmx.trade/markets/${market.slug}`, '_blank');
                 }}
             >

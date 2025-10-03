@@ -1,5 +1,5 @@
 import { useMarketOptionsStore } from '@/stores';
-import { calculateMarketOptionValues } from '@/lib/utils/market-utils';
+import { calculateMarketOptionValues } from '@/lib/utils';
 import { Tooltip } from '@/components/ui';
 
 interface MarketOptionsProps {

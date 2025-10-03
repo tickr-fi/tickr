@@ -1,6 +1,5 @@
 import { Market } from '@/lib/types';
-import { cn } from '@/lib';
-import { formatVolume } from '@/lib/utils/market-utils';
+import { cn, formatVolume } from '@/lib/utils';
 
 interface MarketVolumeProps {
   market: Market;

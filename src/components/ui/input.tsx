@@ -1,5 +1,5 @@
 import { forwardRef, ReactNode } from 'react';
-import { cn } from '@/lib';
+import { cn } from '@/lib/utils';
 
 interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
   leftIcon?: ReactNode;

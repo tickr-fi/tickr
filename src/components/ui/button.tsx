@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { cn } from '@/lib';
+import { cn } from '@/lib/utils';
 
 interface ButtonProps {
   children?: ReactNode;

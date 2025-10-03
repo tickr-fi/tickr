@@ -7,11 +7,11 @@ import { useTranslations } from 'next-intl';
 import { Market } from '@/lib/types';
 import { useMarketOptionsStore } from '@/stores';
 import { Button, useToast } from '@/components/ui';
-import { copyToClipboard } from '@/lib/copy-utils';
-import { cn } from '@/lib';
-import { formatVolume } from '@/lib/utils/market-utils';
-
 import {
+    cn,
+    copyToClipboard,
+    formatVolume,
+    preventEventPropagation,
     calculateMarketOptionValues,
     getChangeColor,
     formatChangeCompact,
@@ -20,7 +20,7 @@ import {
     formatTimeRemaining,
     getTimerColorClass,
     getStatusColorClass
-} from '@/lib/utils/market-utils';
+} from '@/lib/utils';
 
 interface MarketCardProps {
     market: Market;
@@ -210,24 +210,12 @@ export function MarketCard({ market }: MarketCardProps) {
     };
 
     const handleTrade = (e: React.MouseEvent | React.TouchEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-        // Additional Safari iOS fix
-        if (e.nativeEvent) {
-            e.nativeEvent.preventDefault();
-            e.nativeEvent.stopPropagation();
-        }
+        preventEventPropagation(e);
         window.open(`https://pmx.trade/markets/${market.slug}`, '_blank');
     };
 
     const handleShare = async (e: React.MouseEvent | React.TouchEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-        // Additional Safari iOS fix
-        if (e.nativeEvent) {
-            e.nativeEvent.preventDefault();
-            e.nativeEvent.stopPropagation();
-        }
+        preventEventPropagation(e);
         const url = `${window.location.origin}/markets/${market.slug}`;
         const success = await copyToClipboard(url);
 

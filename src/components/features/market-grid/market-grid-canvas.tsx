@@ -2,17 +2,18 @@
 
 import { useRef, useEffect, useCallback, forwardRef, useImperativeHandle } from 'react';
 import { Market } from '@/lib/types';
-import { drawAllTrails } from '@/lib/utils/trail-helpers';
-import { timeToCanvasX, timeToCanvasY } from '@/lib/utils/grid-utils';
-import { TimePeriod } from '@/lib/utils/trail-helpers';
-import { useMarketOptionsStore } from '@/stores';
 import {
+  drawAllTrails,
+  timeToCanvasX,
+  timeToCanvasY,
+  TimePeriod,
   getTimeLevelsForFilter,
   getTimeLabelsForFilter,
   getMaxTimeRangeForFilter,
   getMinTimeRangeForFilter,
   getAggregationPeriodForFilter
-} from '@/lib/utils/time-filter-utils';
+} from '@/lib/utils';
+import { useMarketOptionsStore } from '@/stores';
 
 interface MarketGridCanvasProps {
   width: number;

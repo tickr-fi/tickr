@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Market } from '@/lib/types';
 import Image from 'next/image';
 import { MarketGridHoverTooltip } from './market-grid-hover-tooltip';
-import { getOptionImageUrl } from '@/lib/utils/market-utils';
+import { preventEventPropagation, getOptionImageUrl } from '@/lib/utils';
 import { useMarketOptionsStore } from '@/stores';
 
 interface MarketGridPointProps {
@@ -59,8 +59,7 @@ export function MarketGridPoint({
     };
 
     const handleClick = (e: React.MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
+        preventEventPropagation(e);
         setIsPinned(!isPinned);
     };
 

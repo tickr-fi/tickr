@@ -7,8 +7,7 @@ import { MarketEndDate } from '@/components/features/markets/market-end-date';
 import { MarketLiquidity } from '@/components/features/markets/market-liquidity';
 import { MarketVolume } from '@/components/features/markets/market-volume';
 import { MarketTableActions } from '@/components/features/markets/market-table-actions';
-import { cn } from '@/lib';
-import { getMarketImageUrl, formatDurationSinceCreation } from '@/lib/utils/market-utils';
+import { cn, getMarketImageUrl, formatDurationSinceCreation } from '@/lib/utils';
 
 interface MarketRowProps {
   market: Market;

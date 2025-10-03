@@ -2,9 +2,10 @@
 
 import React from 'react';
 import { Market } from '@/lib/types';
-import { Button } from '@/components/ui';
+import { Button, useToast } from '@/components/ui';
 import { Share2, Zap } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { preventEventPropagation, copyToClipboard } from '@/lib/utils';
 
 interface MarketGridCardButtonsProps {
   market: Market;
@@ -12,27 +13,32 @@ interface MarketGridCardButtonsProps {
 
 export function MarketGridCardButtons({ market }: MarketGridCardButtonsProps) {
   const t = useTranslations('markets.gridCard');
+  const tMarket = useTranslations('markets');
+  const { addToast } = useToast();
   
   const handleTrade = (e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    // Additional Safari iOS fix
-    if (e.nativeEvent) {
-      e.nativeEvent.preventDefault();
-      e.nativeEvent.stopPropagation();
-    }
+    preventEventPropagation(e);
     window.open(`https://pmx.trade/markets/${market.slug}`, '_blank');
   };
   
-  const handleShare = (e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    // Additional Safari iOS fix
-    if (e.nativeEvent) {
-      e.nativeEvent.preventDefault();
-      e.nativeEvent.stopPropagation();
+  const handleShare = async (e: React.MouseEvent | React.TouchEvent) => {
+    preventEventPropagation(e);
+    const url = `https://pmx.trade/markets/${market.slug}`;
+    const success = await copyToClipboard(url);
+    
+    if (success) {
+      addToast({
+        title: tMarket('linkCopied'),
+        type: 'success',
+        duration: 2000
+      });
+    } else {
+      addToast({
+        title: tMarket('copyError'),
+        type: 'error',
+        duration: 3000
+      });
     }
-    navigator.clipboard.writeText(`${window.location.origin}/markets/${market.slug}`);
   };
 
   return (
