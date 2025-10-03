@@ -94,6 +94,7 @@ export interface PMXSupabaseMarket {
       metadata_url: string;
     };
   };
+  collected_fees: number;
 }
 
 // Internal market type

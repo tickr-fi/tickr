@@ -81,7 +81,7 @@ export class MarketsController {
         };
       }
 
-      const { image_urls, limit, created_at } = matchingSupabaseMarket;
+      const { image_urls, limit, created_at, collected_fees } = matchingSupabaseMarket;
 
       const marketImageUrl = typeof image_urls.market === 'string'
         ? image_urls.market
@@ -100,7 +100,8 @@ export class MarketsController {
         slug: matchingSupabaseMarket.slug,
         marketImageUrl,
         limit,
-        createdAt: created_at
+        createdAt: created_at,
+        totalFees: collected_fees
       };
     });
   }
@@ -184,26 +185,26 @@ export class MarketsController {
   }
 
   private async fetchMarketFees(markets: Market[]): Promise<void> {
-    const marketsWithSlugs = markets.filter(market => market.slug);
-    
-    if (marketsWithSlugs.length === 0) {
+    const activeMarkets = markets.filter(market => market.slug && !market.resolved);
+
+    if (activeMarkets.length === 0) {
       return;
     }
 
-    const feesPromises = marketsWithSlugs.map(market =>
+    const feesPromises = activeMarkets.map(market =>
       backendProductionRailwayApi.getMarketFees(market.slug).catch(() => ({ success: false, data: null }))
     );
 
     const feesResults = await Promise.all(feesPromises);
 
-    marketsWithSlugs.forEach((market, index) => {
+    activeMarkets.forEach((market, index) => {
       const result = feesResults[index];
-      
+
       if (result.success && result.data) {
         const feesData = result.data;
-        
+
         market.totalFees = feesData.totalFees.total;
-        
+
         feesData.positionFees.forEach(positionFee => {
           const option = positionFee.option.toUpperCase();
           if (market.options[option as keyof typeof market.options]) {
