@@ -7,9 +7,10 @@ import { useTranslations } from 'next-intl';
 interface MarketCardsGridProps {
   markets: Market[];
   isLoading?: boolean;
+  maxLiquidity?: number;
 }
 
-export function MarketCardsGrid({ markets, isLoading = false }: MarketCardsGridProps) {
+export function MarketCardsGrid({ markets, isLoading = false, maxLiquidity }: MarketCardsGridProps) {
   const t = useTranslations('markets');
 
   return (
@@ -25,7 +26,7 @@ export function MarketCardsGrid({ markets, isLoading = false }: MarketCardsGridP
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {markets.map((market) => (
-            <MarketCard key={market.slug} market={market} />
+            <MarketCard key={market.slug} market={market} maxLiquidity={maxLiquidity} />
           ))}
         </div>
       )}

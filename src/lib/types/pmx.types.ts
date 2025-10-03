@@ -2,7 +2,7 @@ export interface PMXMarket {
   title: string;
   end_date: string;
   description: string;
-  resolved: boolean;
+  resolved: boolean | string;
   options: {
     YES: {
       tokenMint: string;

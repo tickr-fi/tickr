@@ -148,6 +148,12 @@ export function MarketView({ markets, isLoading = false, onRefresh }: MarketView
         }
     });
 
+    // Calculate max liquidity from filtered markets
+    const calculatedMaxLiquidity = filteredMarkets.reduce((max, market) => {
+        const marketLiquidity = market.limit || 0;
+        return Math.max(max, marketLiquidity);
+    }, 0);
+
     const calculatedViewMode = isLargeScreen ? viewMode : (viewMode === 'table' ? 'cards' : viewMode);
     return (
         <div className="w-full bg-background relative">
@@ -171,9 +177,9 @@ export function MarketView({ markets, isLoading = false, onRefresh }: MarketView
             )}
 
             {calculatedViewMode === 'table' ? (
-                <MarketTable markets={filteredMarkets} isLoading={isLoading} />
+                <MarketTable markets={filteredMarkets} isLoading={isLoading} maxLiquidity={calculatedMaxLiquidity} />
             ) : calculatedViewMode === 'cards' ? (
-                <MarketCardsGrid markets={filteredMarkets} isLoading={isLoading} />
+                <MarketCardsGrid markets={filteredMarkets} isLoading={isLoading} maxLiquidity={calculatedMaxLiquidity} />
             ) : (
                 <MarketGridView markets={filteredMarkets} isLoading={isLoading} />
             )}

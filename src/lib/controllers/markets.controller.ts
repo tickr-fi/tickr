@@ -54,6 +54,14 @@ export class MarketsController {
 
       const diffTime = endDate.getTime() - today.getTime();
       market.daysRemaining = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      if (market.daysRemaining <= 0 && !market.resolved) {
+        const yesOption = market.options.YES;
+        const noOption = market.options.NO;
+        if (yesOption.currentPrice && noOption.currentPrice) {
+          market.resolved = yesOption.currentPrice > noOption.currentPrice ? yesOption.name || 'Yes' : noOption.name || 'No';
+        }
+      }
     });
 
     return markets.sort((a, b) => {

@@ -24,9 +24,10 @@ import {
 
 interface MarketCardProps {
     market: Market;
+    maxLiquidity?: number;
 }
 
-export function MarketCard({ market }: MarketCardProps) {
+export function MarketCard({ market, maxLiquidity = 100000 }: MarketCardProps) {
     const { optionsViewMode } = useMarketOptionsStore();
     const { addToast } = useToast();
     const t = useTranslations('markets');
@@ -34,7 +35,6 @@ export function MarketCard({ market }: MarketCardProps) {
     const renderLiquidityAndVolume = () => {
         // Liquidity calculation
         const limit = market.limit || 0;
-        const maxLiquidity = 100000; // 100K
         const liquidityPercentage = Math.min(100, (limit / maxLiquidity) * 100);
 
         // Volume calculation

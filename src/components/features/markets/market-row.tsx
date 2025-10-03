@@ -11,9 +11,10 @@ import { cn, getMarketImageUrl, formatDurationSinceCreation } from '@/lib/utils'
 
 interface MarketRowProps {
   market: Market;
+  maxLiquidity?: number;
 }
 
-export function MarketRow({ market }: MarketRowProps) {
+export function MarketRow({ market, maxLiquidity }: MarketRowProps) {
   const daysRemaining = market.daysRemaining || 0;
 
   const handleTrade = () => {
@@ -83,7 +84,7 @@ export function MarketRow({ market }: MarketRowProps) {
 
       {/* Liquidity Column */}
       <div className="col-span-1 flex justify-center">
-        <MarketLiquidity limit={market.limit} />
+        <MarketLiquidity limit={market.limit} maxLiquidity={maxLiquidity} />
       </div>
 
       {/* Volume Column */}

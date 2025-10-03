@@ -26,6 +26,55 @@ export function MarketGridCard({ market, onClose, highlightedOptionType }: Marke
         onClose?.();
     };
 
+    const renderVolume = () => {
+        const yesVolume = (market.options.YES?.fees || 0) * 25;
+        const noVolume = (market.options.NO?.fees || 0) * 25;
+        const totalOptionVolume = yesVolume + noVolume;
+        const yesPercentage = totalOptionVolume > 0 ? (yesVolume / totalOptionVolume) * 100 : 50;
+        const noPercentage = totalOptionVolume > 0 ? (noVolume / totalOptionVolume) * 100 : 50;
+
+        return (
+            <div className="p-4 border-b border-border">
+                <div className="space-y-3">
+                    {/* Total Volume */}
+                    <div className="flex items-center justify-between">
+                        <span className="text-muted-foreground text-sm font-mono">{t('volume')}</span>
+                        <span className="text-blue-500 text-sm font-mono font-medium">
+                            {formatVolume(market.totalFees ? market.totalFees * 25 : 0)}
+                        </span>
+                    </div>
+                    
+                    {/* Volume Breakdown */}
+                    <div className="space-y-2">
+                        {/* Volume Bar */}
+                        <div className="w-full h-1 bg-muted rounded-full overflow-hidden">
+                            <div className="h-full flex">
+                                <div
+                                    className="h-full bg-green-500 transition-all duration-300"
+                                    style={{ width: `${yesPercentage}%` }}
+                                />
+                                <div
+                                    className="h-full bg-red-500 transition-all duration-300"
+                                    style={{ width: `${noPercentage}%` }}
+                                />
+                            </div>
+                        </div>
+                        
+                        {/* Volume Labels */}
+                        <div className="flex justify-between w-full text-xs font-mono">
+                            <span className="text-green-500">
+                                YES: {formatVolume(yesVolume)}
+                            </span>
+                            <span className="text-red-500">
+                                NO: {formatVolume(noVolume)}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
     return (
         <div className="w-80 bg-background rounded-lg border border-border overflow-hidden shadow-lg">
             {/* Header */}
@@ -103,14 +152,7 @@ export function MarketGridCard({ market, onClose, highlightedOptionType }: Marke
             </div>
 
             {/* Volume */}
-            <div className="p-4 border-b border-border">
-                <div className="flex items-center gap-2">
-                    <span className="text-muted-foreground text-sm">{t('volume')}:</span>
-                    <span className="text-blue-500 text-sm font-medium">
-                        {formatVolume(market.totalFees ? market.totalFees * 25 : 0)}
-                    </span>
-                </div>
-            </div>
+            {renderVolume()}
 
             {/* Action Buttons */}
             <MarketGridCardButtons market={market} />

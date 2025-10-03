@@ -8,9 +8,10 @@ import { useTranslations } from 'next-intl';
 interface MarketTableProps {
   markets: Market[];
   isLoading?: boolean;
+  maxLiquidity?: number;
 }
 
-export function MarketTable({ markets, isLoading = false }: MarketTableProps) {
+export function MarketTable({ markets, isLoading = false, maxLiquidity }: MarketTableProps) {
   const t = useTranslations('markets');
 
   return (
@@ -31,6 +32,7 @@ export function MarketTable({ markets, isLoading = false }: MarketTableProps) {
             <MarketRow
               key={`${market.slug}-${index}`}
               market={market}
+              maxLiquidity={maxLiquidity}
             />
           ))
         )}

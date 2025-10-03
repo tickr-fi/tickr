@@ -1,13 +1,14 @@
 interface MarketLiquidityProps {
   limit?: number;
+  maxLiquidity?: number;
 }
 
-export function MarketLiquidity({ limit }: MarketLiquidityProps) {
+export function MarketLiquidity({ limit, maxLiquidity = 100000 }: MarketLiquidityProps) {
+  
   if (!limit) {
     return <div className="text-xs text-muted-foreground">--</div>;
   }
 
-  const maxLiquidity = 100000; // 100K
   const percentage = Math.min(100, (limit / maxLiquidity) * 100);
 
   return (
