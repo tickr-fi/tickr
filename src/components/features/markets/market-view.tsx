@@ -49,7 +49,7 @@ export function MarketView({ markets, isLoading = false, onRefresh }: MarketView
 
     const filteredMarkets = markets.filter(market => {
         // Status filter
-        let statusMatch = true;
+        let statusMatch: string | boolean = true;
         if (statusFilter === 'ACTIVE') { statusMatch = !market.resolved; }
         if (statusFilter === 'RESOLVED') { statusMatch = market.resolved; }
 

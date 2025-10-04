@@ -2,7 +2,7 @@ import { Check } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 interface MarketStatusBadgeProps {
-  resolved: boolean;
+  resolved: string | boolean;
 }
 
 export function MarketStatusBadge({ resolved }: MarketStatusBadgeProps) {
