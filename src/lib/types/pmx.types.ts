@@ -106,3 +106,52 @@ export interface Market extends PMXMarket {
   daysRemaining?: number;
   totalFees?: number;
 }
+
+// Premarket types
+export interface PMXSupabasePremarket {
+  id: string;
+  creator_address: string;
+  name: string;
+  options: string[];
+  end_date: string;
+  rules: string;
+  created_at: string;
+  description: string;
+  image_urls: {
+    market: {
+      url: string;
+      size: number;
+      filename: string;
+      mimetype: string;
+    };
+    option1: {
+      url: string;
+      size: number;
+      filename: string;
+      mimetype: string;
+    };
+    option2: {
+      url: string;
+      size: number;
+      filename: string;
+      mimetype: string;
+    };
+  };
+  slug: string;
+  funding_wallet: string;
+  limit: number;
+  has_funded: boolean;
+  migrated: boolean;
+  balance: number;
+  rejected: boolean | null;
+  expired: boolean;
+  daysRemaining?: number;
+  fundingProgress?: number;
+}
+
+// Internal premarket type for processed data
+export interface Premarket extends PMXSupabasePremarket {
+  daysRemaining?: number;
+  fundingProgress?: number;
+}
+

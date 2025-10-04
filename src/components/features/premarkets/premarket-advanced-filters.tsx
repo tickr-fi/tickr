@@ -1,26 +1,24 @@
 'use client';
 
 import { X, RotateCcw, Clock, DollarSign, Eye, TrendingUp } from 'lucide-react';
-import { useMarketOptionsStore, TimeFrameFilter, LiquidityFilter, VolumeFilter } from '@/stores';
+import { usePremarketOptionsStore, PremarketTimeFrameFilter, PremarketFundingFilter, PremarketProgressFilter } from '@/stores';
 import { useTranslations } from 'next-intl';
 import { Dropdown, DropdownOption } from '@/components/ui/dropdown';
 
-export function MarketAdvancedFilters() {
-  const t = useTranslations('markets.advancedFilters');
+export function PremarketAdvancedFilters() {
+  const t = useTranslations('premarkets.advancedFilters');
 
   const {
     timeFrameFilter,
     setTimeFrameFilter,
-    liquidityFilter,
-    setLiquidityFilter,
-    volumeFilter,
-    setVolumeFilter,
+    fundingFilter,
+    setFundingFilter,
+    progressFilter,
+    setProgressFilter,
     hideIlliquidMarkets,
     setHideIlliquidMarkets,
-    showMovers10Percent,
-    setShowMovers10Percent,
     setShowAdvancedFilters,
-  } = useMarketOptionsStore();
+  } = usePremarketOptionsStore();
 
   const timeFrameOptions: DropdownOption[] = [
     { key: 'all', label: t('timeframes.all') },
@@ -29,26 +27,25 @@ export function MarketAdvancedFilters() {
     { key: '30d', label: t('timeframes.30d') },
   ];
 
-  const liquidityOptions: DropdownOption[] = [
-    { key: 'any', label: t('liquidity.any') },
-    { key: '10k', label: t('liquidity.10k') },
-    { key: '50k', label: t('liquidity.50k') },
-    { key: '100k', label: t('liquidity.100k') },
+  const fundingOptions: DropdownOption[] = [
+    { key: 'any', label: t('funding.any') },
+    { key: '1k', label: t('funding.1k') },
+    { key: '5k', label: t('funding.5k') },
+    { key: '10k', label: t('funding.10k') },
   ];
 
-  const volumeOptions: DropdownOption[] = [
-    { key: 'any', label: t('volume.any') },
-    { key: '2_5k', label: t('volume.2_5k') },
-    { key: '5k', label: t('volume.5k') },
-    { key: '10k', label: t('volume.10k') },
+  const progressOptions: DropdownOption[] = [
+    { key: 'any', label: t('progress.any') },
+    { key: '25', label: t('progress.25') },
+    { key: '50', label: t('progress.50') },
+    { key: '75', label: t('progress.75') },
   ];
 
   const handleReset = () => {
     setTimeFrameFilter('all');
-    setLiquidityFilter('any');
-    setVolumeFilter('any');
+    setFundingFilter('any');
+    setProgressFilter('any');
     setHideIlliquidMarkets(false);
-    setShowMovers10Percent(false);
   };
 
   const handleClose = () => {
@@ -80,55 +77,58 @@ export function MarketAdvancedFilters() {
 
       {/* Filters Row */}
       <div className="flex flex-col md:flex-row gap-4">
-        {/* Timeframe Filter */}
+        {/* Deadline Timeframe Filter */}
         <div className="flex-1">
           <label className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground mb-1">
             <Clock className="w-3 h-3" />
-            {t('expiryTimeframe')}
+            {t('deadlineTimeframe')}
           </label>
           <Dropdown
             options={timeFrameOptions}
             selectedOption={timeFrameFilter}
-            onOptionChange={(key) => setTimeFrameFilter(key as TimeFrameFilter)}
+            onOptionChange={(key) => setTimeFrameFilter(key as PremarketTimeFrameFilter)}
             className="w-full"
           />
         </div>
 
-        {/* Liquidity Filter */}
+        {/* Min Funding Filter */}
         <div className="flex-1">
           <label className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground mb-1">
             <DollarSign className="w-3 h-3" />
-            {t('minLiquidity')}
+            {t('minFunding')}
           </label>
           <Dropdown
-            options={liquidityOptions}
-            selectedOption={liquidityFilter}
-            onOptionChange={(key) => setLiquidityFilter(key as LiquidityFilter)}
+            options={fundingOptions}
+            selectedOption={fundingFilter}
+            onOptionChange={(key) => setFundingFilter(key as PremarketFundingFilter)}
             className="w-full"
           />
         </div>
 
-        {/* Volume Filter */}
+        {/* Min Progress Filter */}
         <div className="flex-1">
           <label className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground mb-1">
             <TrendingUp className="w-3 h-3" />
-            {t('minVolume')}
+            {t('minProgress')}
           </label>
           <Dropdown
-            options={volumeOptions}
-            selectedOption={volumeFilter}
-            onOptionChange={(key) => setVolumeFilter(key as VolumeFilter)}
+            options={progressOptions}
+            selectedOption={progressFilter}
+            onOptionChange={(key) => setProgressFilter(key as PremarketProgressFilter)}
             className="w-full"
           />
         </div>
 
         {/* Checkboxes Column */}
-        <div className="flex-1 flex flex-col gap-3">
+        <div className="flex-1 flex flex-col">          
+          {/* Spacer to push checkbox to bottom */}
+          <div className="flex-1"></div>
+          
           {/* Hide Illiquid Markets Checkbox */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 mb-2">
             <input
               type="checkbox"
-              id="hideIlliquid"
+              id="hideIlliquidPremarkets"
               checked={hideIlliquidMarkets}
               onChange={(e) => {
                 setHideIlliquidMarkets(e.target.checked);
@@ -137,32 +137,11 @@ export function MarketAdvancedFilters() {
               className="w-4 h-4 text-orange-500 bg-secondary-background border-border rounded focus:ring-orange-500 focus:ring-2 cursor-pointer"
             />
             <label 
-              htmlFor="hideIlliquid" 
+              htmlFor="hideIlliquidPremarkets" 
               className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground cursor-pointer"
             >
               <Eye className="w-3 h-3" />
               {t('hideIlliquidMarkets')}
-            </label>
-          </div>
-
-          {/* Movers 10% Checkbox */}
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="showMovers"
-              checked={showMovers10Percent}
-              onChange={(e) => {
-                setShowMovers10Percent(e.target.checked);
-                e.target.blur();
-              }}
-              className="w-4 h-4 text-orange-500 bg-secondary-background border-border rounded focus:ring-orange-500 focus:ring-2 cursor-pointer"
-            />
-            <label 
-              htmlFor="showMovers" 
-              className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground cursor-pointer"
-            >
-              <TrendingUp className="w-3 h-3" />
-              {t('showMovers10Percent')}
             </label>
           </div>
         </div>

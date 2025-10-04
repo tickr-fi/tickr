@@ -9,7 +9,7 @@ import { MarketGridTimeFilter } from './market-grid-time-filter';
 import { MarketGridOptionsFilter } from './market-grid-options-filter';
 import { useCanvasDimensions } from '@/hooks/useCanvasDimensions';
 import { useResponsiveViewMode } from '@/hooks/useResponsiveViewMode';
-import { filterMarketsByTime, getMaxTimeRangeForFilter, getMinTimeRangeForFilter, transformMarketsToGridData } from '@/lib/utils';
+import { filterMarketsByTime, getMaxTimeRangeForFilter, calculateDynamicMinTime, transformMarketsToGridData } from '@/lib/utils';
 import { useMarketOptionsStore, type GridTimeFilter } from '@/stores';
 
 interface MarketGridViewProps {
@@ -37,7 +37,7 @@ export function MarketGridView({ markets, isLoading = false }: MarketGridViewPro
   const filteredMarkets = filterMarketsByTime(markets, timeFilter);
 
   const maxHours = getMaxTimeRangeForFilter(timeFilter);
-  const minHours = getMinTimeRangeForFilter();
+  const minHours = calculateDynamicMinTime(filteredMarkets, timeFilter);
 
   const padding = isLargeScreen ? 60 : 20; // Match canvas padding calculation
   const canvasHeight = dimensions.height - (isLargeScreen ? 0 : 90); // Match canvas height calculation

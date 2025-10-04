@@ -65,7 +65,7 @@ export function calculateOptionSize(market: Market, optionType: 'YES' | 'NO', is
         return minSize;
     }
 
-    const additionalSize = Math.floor(volume / 1000) * sizePer1K;
+    const additionalSize = Math.floor(volume / 300) * sizePer1K;
     const size = Math.min(minSize + additionalSize, maxSize);
 
     return Math.round(size);

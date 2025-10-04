@@ -84,7 +84,7 @@ export function MarketGridPoint({
                 onClick={handleClick}
             >
                 {/* Main circle container */}
-                <div className={`relative w-full h-full rounded-full overflow-hidden border-2 lg:border-4 ${getBorderColor()} bg-muted/10`}>
+                <div className={`relative w-full h-full rounded-full overflow-hidden border-2 ${getBorderColor()} bg-muted/10`}>
                     {/* Market image or fallback */}
                     {imageUrl ? (
                         <Image

@@ -31,7 +31,7 @@ export function filterMarketsByTime(markets: Market[], timeFilter: GridTimeFilte
   }
 
   const maxHours = getMaxHoursForFilter(timeFilter);
-  
+
   return markets.filter(market => {
     const timeRemaining = calculateTimeRemaining(market.end_date);
     // Only show markets that expire within the selected time range
@@ -109,6 +109,14 @@ export function getTimeLabelsForFilter(timeFilter: GridTimeFilter) {
 }
 
 /**
+ * Get filtered time labels based on dynamic minimum time
+ */
+export function getFilteredTimeLabels(timeFilter: GridTimeFilter, minHours: number, maxHours: number) {
+  const allLabels = getTimeLabelsForFilter(timeFilter);
+  return allLabels.filter(({ hours }) => hours >= minHours && hours <= maxHours);
+}
+
+/**
  * Get appropriate time levels for grid lines based on selected filter
  */
 export function getTimeLevelsForFilter(timeFilter: GridTimeFilter): number[] {
@@ -148,10 +156,41 @@ export function getMaxTimeRangeForFilter(timeFilter: GridTimeFilter): number {
 }
 
 /**
- * Get the minimum time range for X-axis scaling based on selected filter
+ * Calculate dynamic minimum time based on actual market data
+ * Returns the closest predefined log level that includes all markets
  */
-export function getMinTimeRangeForFilter(): number {
-  return 0.1; // Always 6 minutes minimum
+export function calculateDynamicMinTime(markets: Market[], timeFilter: GridTimeFilter): number {
+  if (markets.length === 0) {
+    return 0.1; // Default fallback
+  }
+
+  const maxHours = getMaxHoursForFilter(timeFilter);
+  const timeLevels = getTimeLevelsForFilter(timeFilter);
+
+  // Get all time remaining values from markets within the filter range
+  const timeRemainingValues = markets
+    .map(market => calculateTimeRemaining(market.end_date))
+    .filter(time => time <= maxHours && time > 0)
+    .sort((a, b) => a - b);
+
+  if (timeRemainingValues.length === 0) {
+    return 0.1; // Default fallback if no valid markets
+  }
+
+  const minTime = timeRemainingValues[0];
+
+  // Find the closest time level that is <= the minimum market time
+  // This ensures all markets are included in the visible range
+  let selectedMinTime = 0.1; // Default minimum
+
+  for (let i = timeLevels.length - 1; i >= 0; i--) {
+    if (timeLevels[i] <= minTime) {
+      selectedMinTime = timeLevels[i];
+      break;
+    }
+  }
+
+  return selectedMinTime;
 }
 
 /**

@@ -10,6 +10,7 @@
     "portfolio": "PORTFOLIO",
     "activity": "ACTIVITY",
     "searchPlaceholder": "SEARCH MARKETS...",
+    "searchPremarketsPlaceholder": "SEARCH PREMARKETS...",
     "connectWallet": "CONNECT_WALLET",
     "comingSoon": "COMING SOON"
   },
@@ -119,6 +120,52 @@
       "yes": "YES",
       "no": "NO",
       "winner": "WINNER"
+    }
+  },
+  "premarkets": {
+    "title": "PRE_MARKETS",
+    "lastUpdate": "LAST_UPDATE",
+    "loading": "Loading premarkets...",
+    "noPremarkets": "No premarkets found",
+    "showing": "SHOWING {count} PREMARKETS",
+    "market": "MARKET",
+    "funding": "FUNDING",
+    "deadline": "DEADLINE",
+    "sorting": {
+      "expiringSoon": "Expiring Soon",
+      "expiringLater": "Expiring Later",
+      "alphabetical": "Alphabetical",
+      "liquidity": "Liquidity",
+      "funding": "Funding",
+      "progress": "Progress",
+      "title": "SORT BY"
+    },
+    "advancedFilters": {
+      "title": "FILTER PREMARKETS",
+      "button": "FILTER",
+      "reset": "RESET",
+      "deadlineTimeframe": "DEADLINE TIMEFRAME",
+      "minFunding": "MIN FUNDING",
+      "minProgress": "MIN PROGRESS",
+      "hideIlliquidMarkets": "HIDE ILLIQUID MARKETS",
+      "timeframes": {
+        "all": "All Timeframes",
+        "24h": "Next 24 Hours",
+        "7d": "Next 7 Days",
+        "30d": "Next 30 Days"
+      },
+      "funding": {
+        "any": "Any Funding",
+        "1k": "$1,000+",
+        "5k": "$5,000+",
+        "10k": "$10,000+"
+      },
+      "progress": {
+        "any": "Any Progress",
+        "25": "25%+",
+        "50": "50%+",
+        "75": "75%+"
+      }
     }
   }
 }

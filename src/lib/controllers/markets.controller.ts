@@ -39,8 +39,7 @@ export class MarketsController {
     const markets: Market[] = this.mapSupabaseData(pmxMarkets, supabaseData);
 
     await this.fetchCurrentPrices(markets);
-    await this.fetchHistoricalPrices(markets);
-    await this.fetchMarketFees(markets);
+    await Promise.all([this.fetchHistoricalPrices(markets), this.fetchMarketFees(markets)]);
 
     markets.forEach(market => {
       const today = new Date();

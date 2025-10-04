@@ -8,10 +8,10 @@ import {
   timeToCanvasY,
   TimePeriod,
   getTimeLevelsForFilter,
-  getTimeLabelsForFilter,
+  getFilteredTimeLabels,
   getMaxTimeRangeForFilter,
-  getMinTimeRangeForFilter,
-  getAggregationPeriodForFilter
+  getAggregationPeriodForFilter,
+  calculateDynamicMinTime
 } from '@/lib/utils';
 import { useMarketOptionsStore } from '@/stores';
 
@@ -58,7 +58,7 @@ export const MarketGridCanvas = forwardRef<MarketGridCanvasRef, MarketGridCanvas
       // Draw horizontal grid lines (time levels) - dynamic based on filter
       const timeLevels = getTimeLevelsForFilter(timeFilter);
       const maxHours = getMaxTimeRangeForFilter(timeFilter);
-      const minHours = getMinTimeRangeForFilter();
+      const minHours = calculateDynamicMinTime(markets, timeFilter);
 
       timeLevels.forEach(hours => {
         const y = timeToCanvasY(hours, height, padding, maxHours, minHours);
@@ -67,7 +67,7 @@ export const MarketGridCanvas = forwardRef<MarketGridCanvasRef, MarketGridCanvas
         ctx.lineTo(width - padding, y);
         ctx.stroke();
       });
-    }, [width, height, timeFilter]);
+    }, [width, height, timeFilter, markets]);
 
     // Draw grid lines for desktop (original axes)
     const drawDesktopGridLines = useCallback((ctx: CanvasRenderingContext2D, padding: number) => {
@@ -91,7 +91,7 @@ export const MarketGridCanvas = forwardRef<MarketGridCanvasRef, MarketGridCanvas
       // Draw vertical grid lines (time levels) - dynamic based on filter
       const timeLevels = getTimeLevelsForFilter(timeFilter);
       const maxHours = getMaxTimeRangeForFilter(timeFilter);
-      const minHours = getMinTimeRangeForFilter();
+      const minHours = calculateDynamicMinTime(markets, timeFilter);
 
       timeLevels.forEach(hours => {
         const x = timeToCanvasX(hours, width, padding, maxHours, minHours);
@@ -100,7 +100,7 @@ export const MarketGridCanvas = forwardRef<MarketGridCanvasRef, MarketGridCanvas
         ctx.lineTo(x, height - padding);
         ctx.stroke();
       });
-    }, [width, height, timeFilter]);
+    }, [width, height, timeFilter, markets]);
 
     // Draw axis lines for mobile
     const drawMobileAxisLines = useCallback((ctx: CanvasRenderingContext2D, padding: number) => {
@@ -144,16 +144,16 @@ export const MarketGridCanvas = forwardRef<MarketGridCanvasRef, MarketGridCanvas
       });
 
       // Y-axis tick labels (time levels) - dynamic based on filter
-      const timeLabels = getTimeLabelsForFilter(timeFilter);
       const maxHours = getMaxTimeRangeForFilter(timeFilter);
-      const minHours = getMinTimeRangeForFilter();
+      const minHours = calculateDynamicMinTime(markets, timeFilter);
+      const timeLabels = getFilteredTimeLabels(timeFilter, minHours, maxHours);
 
       timeLabels.forEach(({ hours, label }) => {
         const y = timeToCanvasY(hours, height, padding, maxHours, minHours);
         ctx.textAlign = 'right';
         ctx.fillText(label, padding - 5, y);
       });
-    }, [width, height, timeFilter]);
+    }, [width, height, timeFilter, markets]);
 
     // Draw axis labels for desktop
     const drawDesktopAxisLabels = useCallback((ctx: CanvasRenderingContext2D, padding: number) => {
@@ -183,23 +183,23 @@ export const MarketGridCanvas = forwardRef<MarketGridCanvasRef, MarketGridCanvas
       });
 
       // X-axis tick labels - dynamic based on filter
-      const timeLabels = getTimeLabelsForFilter(timeFilter);
       const maxHours = getMaxTimeRangeForFilter(timeFilter);
-      const minHours = getMinTimeRangeForFilter();
+      const minHours = calculateDynamicMinTime(markets, timeFilter);
+      const timeLabels = getFilteredTimeLabels(timeFilter, minHours, maxHours);
 
       timeLabels.forEach(({ hours, label }) => {
         const x = timeToCanvasX(hours, width, padding, maxHours, minHours);
         ctx.textAlign = 'center';
         ctx.fillText(label, x, height - padding + 20);
       });
-    }, [width, height, timeFilter]);
+    }, [width, height, timeFilter, markets]);
 
     // Draw trails
     const drawTrails = useCallback((ctx: CanvasRenderingContext2D, padding: number) => {
       // Get aggregation period and scaling parameters based on time filter
       const aggregationPeriod = getAggregationPeriodForFilter(timeFilter) as TimePeriod;
       const maxHours = getMaxTimeRangeForFilter(timeFilter);
-      const minHours = getMinTimeRangeForFilter();
+      const minHours = calculateDynamicMinTime(markets, timeFilter);
 
       // Draw all trails with dynamic aggregation and scaling
       const isLargeScreen = width >= 1024;

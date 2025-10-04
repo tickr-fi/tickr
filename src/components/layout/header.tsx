@@ -1,16 +1,17 @@
 'use client';
 
-import { Search, BarChart2, Tag, Activity } from 'lucide-react';
+import { Search, BarChart2, Tag, Activity, TrendingUp } from 'lucide-react';
 import { ThemeToggle } from '@/components/common';
 import { Input } from '@/components/ui';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useMarketOptionsStore } from '@/stores';
+import { useMarketOptionsStore, usePremarketOptionsStore } from '@/stores';
 import Image from 'next/image';
 
 const navigationItems = [
     { key: 'markets', href: '/markets', icon: BarChart2, comingSoon: false },
+    { key: 'preMarkets', href: '/pre-markets', icon: TrendingUp, comingSoon: false },
     // { key: 'gridView', href: '/grid-view', icon: Grid3X3, comingSoon: false },
     { key: 'portfolio', href: '/portfolio', icon: Tag, comingSoon: true },
     { key: 'activity', href: '/activity', icon: Activity, comingSoon: true },
@@ -19,7 +20,13 @@ const navigationItems = [
 export function Header() {
     const t = useTranslations('navigation');
     const pathname = usePathname();
-    const { searchQuery, setSearchQuery } = useMarketOptionsStore();
+    
+    // Use appropriate store based on current page
+    const isPremarketsPage = pathname.includes('/pre-markets');
+    const marketStore = useMarketOptionsStore();
+    const premarketStore = usePremarketOptionsStore();
+    
+    const { searchQuery, setSearchQuery } = isPremarketsPage ? premarketStore : marketStore;
 
     return (
         <header className="bg-background border-t border-border border-b border-border px-2 py-2 h-[49px]">
@@ -82,7 +89,7 @@ export function Header() {
                     <div className="hidden lg:block">
                         <Input
                             type="text"
-                            placeholder={t('searchPlaceholder')}
+                            placeholder={isPremarketsPage ? t('searchPremarketsPlaceholder') : t('searchPlaceholder')}
                             rightIcon={<Search className="w-4 h-4" />}
                             className="w-60"
                             value={searchQuery}
