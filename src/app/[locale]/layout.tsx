@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import { setRequestLocale } from 'next-intl/server';
 import { Providers } from '@/app/providers';
-import { Header, SmallHeader } from '@/components/layout';
+import { Header, SmallHeader, GlobalLoader } from '@/components/layout';
 import '@/app/globals.css';
 import { JetBrains_Mono } from 'next/font/google';
 import { SpeedInsights } from '@vercel/speed-insights/next';
@@ -38,7 +38,9 @@ export default async function LocaleLayout({ children, params }: Props) {
                         <div className="min-h-screen bg-background text-foreground">
                             <SmallHeader />
                             <Header />
-                            {children}
+                            <GlobalLoader>
+                                {children}
+                            </GlobalLoader>
                         </div>
                     </Providers>
                 </NextIntlClientProvider>

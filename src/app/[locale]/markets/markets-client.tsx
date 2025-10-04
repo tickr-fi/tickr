@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { MarketView } from '@/components/features';
 import { Market } from '@/lib/types';
 import { apiRequest } from '@/lib/api/client';
+import { useGlobalLoadingStore } from '@/stores';
 
 interface MarketsPageClientProps {
   initialMarkets: Market[];
@@ -12,6 +13,11 @@ interface MarketsPageClientProps {
 export function MarketsPageClient({ initialMarkets }: MarketsPageClientProps) {
   const [markets, setMarkets] = useState<Market[]>(initialMarkets);
   const [isLoading, setIsLoading] = useState(false);
+  const { setIsLoading: setGlobalLoading } = useGlobalLoadingStore();
+
+  useEffect(() => {
+    setGlobalLoading(false);
+  }, [setGlobalLoading]);
 
   const handleRefresh = async () => {
     setIsLoading(true);

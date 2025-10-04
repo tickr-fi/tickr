@@ -6,7 +6,7 @@ import { Input } from '@/components/ui';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useMarketOptionsStore, usePremarketOptionsStore } from '@/stores';
+import { useMarketOptionsStore, usePremarketOptionsStore, useGlobalLoadingStore } from '@/stores';
 import Image from 'next/image';
 
 const navigationItems = [
@@ -25,8 +25,15 @@ export function Header() {
     const isPremarketsPage = pathname.includes('/pre-markets');
     const marketStore = useMarketOptionsStore();
     const premarketStore = usePremarketOptionsStore();
+    const { setIsLoading } = useGlobalLoadingStore();
     
     const { searchQuery, setSearchQuery } = isPremarketsPage ? premarketStore : marketStore;
+
+    const handleNavigation = (href: string) => {
+        if (!pathname.includes(href)) {
+            setIsLoading(true);
+        }
+    };
 
     return (
         <header className="bg-background border-t border-border border-b border-border px-2 py-2 h-[49px]">
@@ -63,6 +70,7 @@ export function Header() {
                                 <div key={item.key} className="flex items-center gap-2">
                                     <Link
                                         href={item.href}
+                                        onClick={() => handleNavigation(item.href)}
                                         className={`font-mono text-xs font-medium leading-4 transition-colors 
                                             flex items-center gap-2 ${isActive ? 'text-foreground' : 'text-muted-foreground hover:text-primary'}`}
                                     >

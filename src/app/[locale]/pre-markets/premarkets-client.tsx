@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { PremarketTable, PremarketHeader } from '@/components/features/premarkets';
 import { Premarket } from '@/lib/types';
-import { usePremarketOptionsStore } from '@/stores';
+import { usePremarketOptionsStore, useGlobalLoadingStore } from '@/stores';
 
 interface PremarketsClientProps {
     initialPremarkets: Premarket[];
@@ -25,6 +25,7 @@ export function PremarketsClient({ initialPremarkets }: PremarketsClientProps) {
         setLastUpdate,
         lastUpdate
     } = usePremarketOptionsStore();
+    const { setIsLoading: setGlobalLoading } = useGlobalLoadingStore();
 
     const fetchPremarkets = async (reset = false) => {
         try {
@@ -75,10 +76,17 @@ export function PremarketsClient({ initialPremarkets }: PremarketsClientProps) {
         }
     };
 
-    // Update hasMore based on initial data
     useEffect(() => {
         setHasMore(initialPremarkets.length === 20);
-    }, [initialPremarkets.length]);
+        if (initialPremarkets.length > 0 && !lastUpdate) {
+            setLastUpdate(new Date());
+        }
+    }, [initialPremarkets.length, lastUpdate, setLastUpdate]);
+
+    // Set global loading to false when component mounts
+    useEffect(() => {
+        setGlobalLoading(false);
+    }, [setGlobalLoading]);
 
     // Filter premarkets
     const filteredPremarkets = premarkets.filter(premarket => {
